@@ -1,0 +1,14 @@
+name: "family_board"
+
+services:
+  app:
+    build:
+      context: Frontend
+    ports:
+      - "8080:8080"
+
+  backend:
+    build:
+      context: Backend
+    ports:
+      - "8000:8080"
