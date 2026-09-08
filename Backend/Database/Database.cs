@@ -4,7 +4,7 @@ namespace Backend.Database;
 
 public class Database
 {
-    private static string ConnectionString = "Host=localhost:5432;Username=postgres;Password=password;Database=familyBoard";
+    public static string ConnectionString { private get; set; }
 
     public static NpgsqlConnection GetConn()
     {
