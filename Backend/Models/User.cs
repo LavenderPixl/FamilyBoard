@@ -12,6 +12,6 @@ public class User
     [JsonIgnore]
     public string? Password;
     public int Points;
-    public bool SsAdult;
+    public bool IsAdult;
     public Family Family;
 }
