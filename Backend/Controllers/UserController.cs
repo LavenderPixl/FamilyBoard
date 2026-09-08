@@ -7,8 +7,8 @@ namespace Backend.Controllers;
 [Route("[controller]")]
 public class UserController : ControllerBase
 {
-    [HttpPost(Name = "CreateUser")]
-    public IActionResult CreateUser( NewUser newUser)
+    [HttpPost("CreateUser")]
+    public IActionResult CreateUser(NewUser newUser)
     {
         string insertQuery = @"INSERT INTO users (email, username, hashed_password) VALUES (@email, @username, @hashedPassword)";
         string hashedPassword = BCrypt.Net.BCrypt.EnhancedHashPassword(newUser.Password, 5);

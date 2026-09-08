@@ -9,7 +9,7 @@ using Microsoft.IdentityModel.Tokens;
 namespace Backend.Controllers;
 
 [ApiController]
-[Route("[controller]/login")]
+[Route("[controller]/")]
 public class AuthController : ControllerBase
 {
     private readonly IConfiguration _configuration;
@@ -20,7 +20,7 @@ public class AuthController : ControllerBase
     }
 
     // [Route("Auth/login")]
-    [HttpPost(Name = "login")]
+    [HttpPost("login")]
     public IActionResult Login(LoginUser loginUser)
     {
         var conn = Database.Database.GetConn();
