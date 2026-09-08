@@ -2,6 +2,7 @@ using System.Text;
 using Backend.Database;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -29,19 +30,42 @@ builder.Services.AddAuthentication(options =>
 });
 
 // Add services to the container.
-
 builder.Services.AddControllers();
-// Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
-builder.Services.AddOpenApi();
+
+// Add Swagger with JWT configuration
+builder.Services.AddSwaggerGen(options =>
+{
+    options.SwaggerDoc("v1", new OpenApiInfo
+    {
+        Title = "FamilyBoard API",
+        Version = "v1"
+    });
+
+    options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+    {
+        Type = SecuritySchemeType.Http,
+        Scheme = "bearer",
+        BearerFormat = "JWT",
+        In = ParameterLocation.Header,
+        Name = "Authorization",
+        Description = "Enter your JWT token"
+    });
+
+    options.AddSecurityRequirement(document =>
+        new OpenApiSecurityRequirement
+        {
+            [new OpenApiSecuritySchemeReference("Bearer", document)] =
+                new List<string>()
+        });
+});
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
-app.MapOpenApi();
+app.UseSwagger();
 
 app.UseSwaggerUI(options =>
 {
-    options.SwaggerEndpoint("/openapi/v1.json", "v1");
+    options.SwaggerEndpoint("/swagger/v1/swagger.json", "FamilyBoard API v1");
 });
 
 // app.UseHttpsRedirection();
