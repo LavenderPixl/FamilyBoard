@@ -1,6 +1,6 @@
 -- DROP DATABASE IF EXISTS familyBoard;
 -- CREATE DATABASE familyBoard;
--- \c familyBoard
+\c familyBoard
 
 CREATE TABLE families(
     id SERIAL PRIMARY KEY,
