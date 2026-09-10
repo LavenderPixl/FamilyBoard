@@ -1,4 +1,5 @@
 using System.Security.Claims;
+using Backend.DataAccess;
 using Backend.Models;
 using Dapper;
 using Microsoft.AspNetCore.Authorization;
@@ -14,19 +15,9 @@ public class UserController : ControllerBase
     [HttpPost("CreateUser")]
     public IActionResult CreateUser(NewUser newUser)
     {
-        string insertQuery = @"INSERT INTO users (email, username, hashed_password) VALUES (@email, @username, @hashedPassword)";
-        string hashedPassword = hashPassword(newUser.Password);
-
-        var conn = Database.Database.GetConn();
-        
-        var isEmailTaken = conn.ExecuteScalar<bool>("SELECT COUNT(1) FROM users WHERE email=@email",
-            new { email = newUser.Email });
-
-        if (isEmailTaken)
+        if (!UserDataAccess.CreateUser(newUser.Email, newUser.Username, newUser.Password))
             return Conflict();
-        
-        conn.Execute(insertQuery, new { email = newUser.Email, username = newUser.Username, hashedPassword });
-
+            
         return Ok();
     }
 
@@ -34,11 +25,7 @@ public class UserController : ControllerBase
     [Authorize]
     public ActionResult<User> GetUser(int userId)
     {
-        string SelectQuery = @"SELECT * FROM users WHERE id = @id";
-
-        var conn = Database.Database.GetConn();
-
-        var user = conn.QueryFirstOrDefault<User>(SelectQuery, new { id = userId });
+        var user = UserDataAccess.GetUser(userId);
         if (user == null) return NotFound();
         
         return Ok(user);
@@ -48,7 +35,7 @@ public class UserController : ControllerBase
     [Authorize]
     public ActionResult<User> GetUser()
     {
-        var userId = Convert.ToInt32(User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
+        var userId = Convert.ToInt32(User.FindFirstValue(ClaimTypes.NameIdentifier));
         return GetUser(userId);
     }
 
@@ -56,13 +43,12 @@ public class UserController : ControllerBase
     [Authorize]
     public IActionResult DeleteLoggedInUser()
     {
-        string deletionquery = @"DELETE FROM users WHERE id=@id";
-        var userId = Convert.ToInt32(User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
+        var userId = Convert.ToInt32(User.FindFirstValue(ClaimTypes.NameIdentifier));
 
-        var conn = Database.Database.GetConn();
-
-        conn.Execute(deletionquery, new { id = userId });
+        if (!UserDataAccess.DeleteUser(userId))
+            return StatusCode(500);
         
+        // Internal Server Error
         return Ok();
     }
 
@@ -70,40 +56,26 @@ public class UserController : ControllerBase
     [Authorize]
     public IActionResult ChangePassword(UpdatePassword updatePassword)
     {
-        var userId = Convert.ToInt32(User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
-
+        var userId = Convert.ToInt32(User.FindFirstValue(ClaimTypes.NameIdentifier));
         string userEmail = User.FindFirstValue(ClaimTypes.Email);
-        if (!Models.User.IsPasswordValid(userEmail, updatePassword.OldPassword)) return Forbid();
+        if (userEmail == null) return Forbid();
 
-        string newHash = hashPassword(updatePassword.NewPassword);
-        UpdateSingleColumnForUser("hashed_password", newHash, userId);
+        if (!UserDataAccess.ChangePassword(userId, userEmail, updatePassword.OldPassword, updatePassword.NewPassword))
+            return Forbid();
         
         return Ok();
     }
-    
-    private string hashPassword(string password)
-    {
-        return BCrypt.Net.BCrypt.EnhancedHashPassword(password, 5);
-    }
 
-    private void UpdateSingleColumnForUser<T>(string column, T newValue, int userId)
-    {
-        var conn = Database.Database.GetConn();
-        string updateQuery = @$"UPDATE users SET {column} = @newValue WHERE id = @id";
-
-        conn.Execute(updateQuery, new { newValue = newValue, id = userId });
-    }
-    
-    public class UpdatePassword
-    {
-        public string OldPassword { get; set; }
-        public string NewPassword { get; set; }
-    }
-    
     public class NewUser
     {
         public string Email { get; set; }
         public string Username { get; set; }
         public string Password { get; set; }
     }
+    public class UpdatePassword
+    {
+        public string OldPassword { get; set; }
+        public string NewPassword { get; set; }
+    }
+    
 }

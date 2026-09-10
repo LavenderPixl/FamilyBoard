@@ -1,4 +1,5 @@
 using System.Text.Json.Serialization;
+using Backend.DataAccess;
 using Dapper;
 
 namespace Backend.Models;
@@ -18,10 +19,7 @@ public class User
     
     public static bool IsPasswordValid(string email, string password)
     {
-        var conn = Database.Database.GetConn();
-        string hashedPasswordQuery = @"SElECT hashed_password FROM users WHERE email = @email";
-
-        string? hashedPassword = conn.QueryFirstOrDefault<string>(hashedPasswordQuery, new { email = email });
+        string? hashedPassword = UserDataAccess.GetHashedPasswordFromEmail(email);
         if (hashedPassword == null) return false;
         // Checks if the password matches our hashed
         if (!BCrypt.Net.BCrypt.EnhancedVerify(password, hashedPassword)) return false;

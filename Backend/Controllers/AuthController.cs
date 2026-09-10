@@ -1,6 +1,7 @@
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
+using Backend.DataAccess;
 using Backend.Models;
 using Dapper;
 using Microsoft.AspNetCore.Mvc;
@@ -23,19 +24,14 @@ public class AuthController : ControllerBase
     [HttpPost("login")]
     public IActionResult Login(LoginUser loginUser)
     {
-        var conn = Database.Database.GetConn();
-        string selectUserQuery = @"SELECT * FROM users WHERE email = @email";
-
         if (!Models.User.IsPasswordValid(loginUser.Email, loginUser.Password)) return Unauthorized();
-        
-        var user = conn.QueryFirstOrDefault<User>(selectUserQuery, new { email = loginUser.Email });
+
+        var user = UserDataAccess.GetUserFromEmail(loginUser.Email);
         if (user == null) return Problem();
         var token = GenerateJwtToken(user);
         
         return Ok(token);
     }
-
-    
     
     private string GenerateJwtToken(User user)
     {
