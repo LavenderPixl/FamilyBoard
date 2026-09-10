@@ -16,4 +16,11 @@ export default {
             password: password
         })
     },
+    createUser(email: string, username: string, password: string) {
+        return HTTP.post('/User/create-user', {
+            email: email,
+            username: username,
+            password: password
+        })
+    }
 }

@@ -7,7 +7,7 @@ namespace Backend.Controllers;
 [Route("[controller]")]
 public class UserController : ControllerBase
 {
-    [HttpPost("CreateUser")]
+    [HttpPost("create-user")]
     public IActionResult CreateUser(NewUser newUser)
     {
         string insertQuery = @"INSERT INTO users (email, username, hashed_password) VALUES (@email, @username, @hashedPassword)";
