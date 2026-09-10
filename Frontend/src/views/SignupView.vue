@@ -24,13 +24,13 @@ function createUser() {
   // Check if password is within rules
   if (!/^(?=.*[a-z])(?=.*[A-Z]).{4,}$/.test(password.value) ) {
     error.value = true;
-    errorMessage.value = 'Kodeordet må indeholde minimum 4 karakterer,\nmed minimum en stor og en lille.';
+    errorMessage.value = 'Kodeordet skal være minimum 4 karakterer,\nog indeholde en stor og en lille karakter.';
     return;
   }
   // Check if username is within rules
   if (!/^[a-zA-Z0-9]{3,}$/.test(username.value)) {
     error.value = true;
-    errorMessage.value = 'Brugernavn må være minimum 3 karakterer\nog kan kun indeholde bogstaver eller nummer.';
+    errorMessage.value = 'Brugernavn skal være minimum 3 karakterer\nog kan kun indeholde bogstaver eller numre.';
     return;
   }
 
