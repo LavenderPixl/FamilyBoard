@@ -1,5 +1,13 @@
 <script setup lang="ts">
+import router from "@/router";
+import { useAuth } from "@/stores/auth.ts";
 
+const auth = useAuth();
+
+function logout() {
+  auth.logout()
+  router.push("/login")
+}
 </script>
 
 <template>
@@ -10,7 +18,7 @@
       <RouterLink to="/administrer-pligter">Administrer pligter</RouterLink>
       <RouterLink to="/familieindstillinger">Familieindstillinger</RouterLink>
       <RouterLink to="/kontoindstillinger">Kontoindstillinger</RouterLink>
-      <RouterLink to="/login">Log ud</RouterLink>
+      <a href="#" @click.prevent="logout">Log ud</a>
     </div>
   </nav>
 </template>
