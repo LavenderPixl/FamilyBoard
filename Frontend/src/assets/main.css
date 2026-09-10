@@ -12,7 +12,10 @@
   color: var(--color-text-hover);
 }
 
-p{
+h1 {
+  color: var(--color-text);
+}
+p {
   color: var(--color-text);
 }
 
