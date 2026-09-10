@@ -3,7 +3,6 @@ using System.Security.Claims;
 using System.Text;
 using Backend.DataAccess;
 using Backend.Models;
-using Dapper;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 

@@ -1,6 +1,5 @@
 using System.Text.Json.Serialization;
 using Backend.DataAccess;
-using Dapper;
 
 namespace Backend.Models;
 

@@ -1,9 +1,7 @@
 using System.Security.Claims;
 using Backend.DataAccess;
 using Backend.Models;
-using Dapper;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Backend.Controllers;
@@ -65,6 +63,37 @@ public class UserController : ControllerBase
         
         return Ok();
     }
+    
+    [HttpPut("GivePoints")]
+    [Authorize]
+    public ActionResult<User> GivePoints(PointsToGive pointsToGive)
+    {
+        if (!UserDataAccess.AddPoints(pointsToGive.Id, pointsToGive.Amount)) return NotFound("dsa");
+
+        var updatedUser = UserDataAccess.GetUser(pointsToGive.Id);
+        return Ok(updatedUser);
+    }
+
+    [HttpPut("UpdateAdultStatus")]
+    [Authorize]
+    public ActionResult<User> ChangeAdultStatus(UpdateAdultStatus adultStatus)
+    {
+        if (!UserDataAccess.UpdateAdultStatus(adultStatus.UserId, adultStatus.IsAdult)) return NotFound();
+
+        var updateUser = UserDataAccess.GetUser(adultStatus.UserId);
+        return Ok(updateUser);
+    }
+
+    [HttpPut("UpdateUsername")]
+    [Authorize]
+    public ActionResult<User> ChangeUsername([FromBody]string username)
+    {
+        var userId = Convert.ToInt32(User.FindFirstValue(ClaimTypes.NameIdentifier));
+        if (!UserDataAccess.UpdateUsername(userId, username)) return NotFound();
+        
+        var updateUser = UserDataAccess.GetUser(userId);
+        return Ok(updateUser);
+    }
 
     public class NewUser
     {
@@ -76,6 +105,18 @@ public class UserController : ControllerBase
     {
         public string OldPassword { get; set; }
         public string NewPassword { get; set; }
+    }
+
+    public class PointsToGive
+    {
+        public int Id { get; set; }
+        public int Amount { get; set; }
+    }
+    
+    public class UpdateAdultStatus
+    {
+        public int UserId { get; set; }
+        public bool IsAdult { get; set; }
     }
     
 }

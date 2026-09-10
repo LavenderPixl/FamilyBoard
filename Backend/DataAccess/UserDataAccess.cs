@@ -77,6 +77,54 @@ public static class UserDataAccess
         
         return true;
     }
+
+    public static bool AddPoints(int userId, int amount)
+    {
+        string updateQuery = @"UPDATE users SET points = points + @amount WHERE id = @id";
+        var conn = Database.Database.GetConn();
+
+        try
+        {
+            conn.Execute(updateQuery, new { id = userId, amount });
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            return false;
+        }
+
+        return true;
+    }
+
+    public static bool UpdateAdultStatus(int userId, bool isAdult)
+    {
+        try
+        {
+            UpdateSingleColumnForUser("is_adult", isAdult, userId);
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            return false;
+        }
+        
+        return true;
+    }
+
+    public static bool UpdateUsername(int userId, string username)
+    {
+        try
+        {
+            UpdateSingleColumnForUser("username", username, userId);
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            return false;
+        }
+
+        return true;
+    }
     
     private static void UpdateSingleColumnForUser<T>(string column, T newValue, int userId)
     {
