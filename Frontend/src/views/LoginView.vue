@@ -1,5 +1,6 @@
 <script lang="ts" setup>
 import api from "../api"
+import { useAuth } from "../stores/auth.ts"
 import { ref } from "vue";
 import router from "@/router";
 
@@ -7,12 +8,14 @@ const email = ref('');
 const password = ref('');
 const incorrectLogin = ref(false);
 
+const auth = useAuth();
+
 function login() {
   incorrectLogin.value = false;
 
   api.login(email.value, password.value)
       .then(res => {
-        localStorage.setItem("token", res.data);
+        auth.setToken(res.data);
         router.push('/')
         })
       .catch (err => {

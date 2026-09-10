@@ -1,5 +1,7 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import HomeView from '../views/HomeView.vue'
+import {useAuth} from "@/stores/auth.ts";
+import LoginView from "@/views/LoginView.vue";
 
 const router = createRouter({
   linkActiveClass: 'border-indigo-500',
@@ -8,6 +10,9 @@ const router = createRouter({
     {
       path: '/',
       name: 'home',
+      meta: {
+        requiresAuth: true,
+      },
       component: HomeView,
     },
     {
@@ -38,4 +43,11 @@ const router = createRouter({
   ],
 })
 
+// Routes user to login, if they aren't logged in/auth isn't valid and if view has "requiresAuth" meta.
+router.beforeEach((to) => {
+  const auth = useAuth()
+  if (to.meta.requiresAuth && !auth.isLoggedIn) {
+    return {name: "login", component: LoginView}
+  }
+})
 export default router
