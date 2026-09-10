@@ -9,9 +9,9 @@ public static class UserDataAccess
     {
         string insertQuery = @"INSERT INTO users (email, username, hashed_password) VALUES (@email, @username, @hashedPassword)";
         string hashedPassword = hashPassword(password);
-        var conn = Database.Database.GetConn();
+        using var conn = Database.Database.GetConn();
         
-        var isEmailTaken = conn.ExecuteScalar<bool>("SELECT COUNT(1) FROM users WHERE email=@email",
+        var isEmailTaken =  conn.ExecuteScalar<bool>("SELECT COUNT(1) FROM users WHERE email=@email",
             new { email = email });
 
         if (isEmailTaken)
@@ -25,7 +25,7 @@ public static class UserDataAccess
     public static User? GetUser(int userId)
     {
         string selectQuery = @"SELECT * FROM users WHERE id = @id";
-        var conn = Database.Database.GetConn();
+        using var conn = Database.Database.GetConn();
 
         var user = conn.QueryFirstOrDefault<User>(selectQuery, new { id = userId });
         
@@ -35,7 +35,7 @@ public static class UserDataAccess
     public static User? GetUserFromEmail(string email)
     {
         string SelectQuery = @"SELECT * FROM users WHERE email = @email";
-        var conn = Database.Database.GetConn();
+        using var conn = Database.Database.GetConn();
 
         var user = conn.QueryFirstOrDefault<User>(SelectQuery, new { email = email });
         
@@ -45,7 +45,7 @@ public static class UserDataAccess
     public static string? GetHashedPasswordFromEmail(string email)
     {
         string hashedPasswordQuery = @"SElECT hashed_password FROM users WHERE email = @email";
-        var conn = Database.Database.GetConn();
+        using var conn = Database.Database.GetConn();
 
         return conn.QueryFirstOrDefault<string>(hashedPasswordQuery, new { email = email });
     }
@@ -54,7 +54,7 @@ public static class UserDataAccess
     {
         string deletionquery = @"DELETE FROM users WHERE id=@id";
 
-        var conn = Database.Database.GetConn();
+        using var conn = Database.Database.GetConn();
 
         try
         {
@@ -81,7 +81,7 @@ public static class UserDataAccess
     public static bool AddPoints(int userId, int amount)
     {
         string updateQuery = @"UPDATE users SET points = points + @amount WHERE id = @id";
-        var conn = Database.Database.GetConn();
+        using var conn = Database.Database.GetConn();
 
         try
         {
@@ -129,7 +129,7 @@ public static class UserDataAccess
     private static void UpdateSingleColumnForUser<T>(string column, T newValue, int userId)
     {
         string updateQuery = @$"UPDATE users SET {column} = @newValue WHERE id = @id";
-        var conn = Database.Database.GetConn();
+        using var conn = Database.Database.GetConn();
         
         conn.Execute(updateQuery, new { newValue = newValue, id = userId });
     }
