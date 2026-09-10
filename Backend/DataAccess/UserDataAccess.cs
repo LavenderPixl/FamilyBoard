@@ -24,10 +24,10 @@ public static class UserDataAccess
     
     public static User? GetUser(int userId)
     {
-        string SelectQuery = @"SELECT * FROM users WHERE id = @id";
+        string selectQuery = @"SELECT * FROM users WHERE id = @id";
         var conn = Database.Database.GetConn();
 
-        var user = conn.QueryFirstOrDefault<User>(SelectQuery, new { id = userId });
+        var user = conn.QueryFirstOrDefault<User>(selectQuery, new { id = userId });
         
         return user;
     }
