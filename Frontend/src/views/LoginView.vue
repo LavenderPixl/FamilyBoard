@@ -33,10 +33,10 @@ function login() {
     <div class="container text-center">
       <h1 class="title"> FamilyBoard </h1>
       <p v-if="incorrectLogin" class="alert-danger mt-3">Vi kunne ikke finde en bruger <br>med denne email og kodeord.</p>
-      <form class="login-form">
+      <form class="login-form" @submit.prevent="login">
         <input v-model="email" name="email" placeholder="Indtast din email" required type="email"/>
         <input v-model="password" name="password" placeholder="Indtast dit kodeord" required type="password"/>
-        <button type="button" @click= "login">Log ind</button>
+        <button type="submit">Log ind</button>
         <button v-on:click="$router.push('/signup')" type="button">Opret ny bruger</button>
       </form>
     </div>
