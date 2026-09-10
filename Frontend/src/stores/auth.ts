@@ -9,8 +9,7 @@ export const useAuth = defineStore('auth', {
         isLoggedIn: (state) => !!state.token,
     },
     actions: {
-        setToken: (token: string) => {
-            // @ts-ignore
+        setToken (token: string){
             this.token = token
             localStorage.setItem('token', token)
         },
