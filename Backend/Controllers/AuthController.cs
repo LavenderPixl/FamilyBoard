@@ -24,20 +24,18 @@ public class AuthController : ControllerBase
     public IActionResult Login(LoginUser loginUser)
     {
         var conn = Database.Database.GetConn();
-        string hashedPasswordQuery = @"SElECT hashed_password FROM users WHERE email = @email";
         string selectUserQuery = @"SELECT * FROM users WHERE email = @email";
 
-        string? hashedPassword = conn.QueryFirstOrDefault<string>(hashedPasswordQuery, new { email = loginUser.Email });
-        if (hashedPassword == null) return Unauthorized();
-        // Checks if the password matches our hashed
-        if (!BCrypt.Net.BCrypt.EnhancedVerify(loginUser.Password, hashedPassword)) return Unauthorized();
-
+        if (!Models.User.IsPasswordValid(loginUser.Email, loginUser.Password)) return Unauthorized();
+        
         var user = conn.QueryFirstOrDefault<User>(selectUserQuery, new { email = loginUser.Email });
         if (user == null) return Problem();
         var token = GenerateJwtToken(user);
         
         return Ok(token);
     }
+
+    
     
     private string GenerateJwtToken(User user)
     {
