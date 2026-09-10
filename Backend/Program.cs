@@ -4,6 +4,8 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi;
 
+var AllowSpecificOrigins = "_allowSpecificOrigins";
+
 var builder = WebApplication.CreateBuilder(args);
 
 Database.ConnectionString = builder.Configuration.GetConnectionString("familyBoard");
@@ -28,6 +30,17 @@ builder.Services.AddAuthentication(options =>
         ValidAudience = jwtSettings["Audience"],
         IssuerSigningKey = new SymmetricSecurityKey(key)
     };
+});
+
+builder.Services.AddCors(options => {
+    options.AddPolicy(name: AllowSpecificOrigins,
+                      policy => {
+                                policy.WithOrigins(
+                                "https://familyboard.boldbyte.dev/",
+                                "http://localhost:5173", "http://localhost")
+                                .AllowAnyHeader()
+                                .AllowAnyMethod();
+                                });
 });
 
 // Add services to the container.
@@ -68,6 +81,8 @@ app.UseSwaggerUI(options =>
 {
     options.SwaggerEndpoint("/swagger/v1/swagger.json", "FamilyBoard API v1");
 });
+
+app.UseCors(AllowSpecificOrigins);
 
 // app.UseHttpsRedirection();
 app.UseAuthentication();
