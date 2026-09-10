@@ -9,7 +9,7 @@ using Microsoft.IdentityModel.Tokens;
 namespace Backend.Controllers;
 
 [ApiController]
-[Route("[controller]/")]
+[Route("auth")]
 public class AuthController : ControllerBase
 {
     private readonly IConfiguration _configuration;
@@ -19,8 +19,7 @@ public class AuthController : ControllerBase
         _configuration = configuration;
     }
 
-    // [Route("Auth/login")]
-    [HttpPost("login")]
+    [HttpPost("log-in")]
     public IActionResult Login(LoginUser loginUser)
     {
         if (!Models.User.IsPasswordValid(loginUser.Email, loginUser.Password)) return Unauthorized();

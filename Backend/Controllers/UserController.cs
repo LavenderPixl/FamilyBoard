@@ -7,10 +7,10 @@ using Microsoft.AspNetCore.Mvc;
 namespace Backend.Controllers;
 
 [ApiController]
-[Route("[controller]")]
+[Route("user")]
 public class UserController : ControllerBase
 {
-    [HttpPost("CreateUser")]
+    [HttpPost("create-user")]
     public IActionResult CreateUser(NewUser newUser)
     {
         if (!UserDataAccess.CreateUser(newUser.Email, newUser.Username, newUser.Password))
@@ -19,7 +19,7 @@ public class UserController : ControllerBase
         return Ok();
     }
 
-    [HttpGet("GetUser")]
+    [HttpGet("get-user")]
     [Authorize]
     public ActionResult<User> GetUser(int userId)
     {
@@ -29,7 +29,7 @@ public class UserController : ControllerBase
         return Ok(user);
     }
     
-    [HttpGet("GetLoggedInUser")]
+    [HttpGet("get-logged-in-user")]
     [Authorize]
     public ActionResult<User> GetUser()
     {
@@ -37,7 +37,7 @@ public class UserController : ControllerBase
         return GetUser(userId);
     }
 
-    [HttpDelete("DeleteLoggedInUser")]
+    [HttpDelete("delete-logged-in-user")]
     [Authorize]
     public IActionResult DeleteLoggedInUser()
     {
@@ -50,7 +50,7 @@ public class UserController : ControllerBase
         return Ok();
     }
 
-    [HttpPut("UpdatePassword")]
+    [HttpPut("update-password")]
     [Authorize]
     public IActionResult ChangePassword(UpdatePassword updatePassword)
     {
@@ -64,7 +64,7 @@ public class UserController : ControllerBase
         return Ok();
     }
     
-    [HttpPut("GivePoints")]
+    [HttpPut("give-points")]
     [Authorize]
     public ActionResult<User> GivePoints(PointsToGive pointsToGive)
     {
@@ -74,7 +74,7 @@ public class UserController : ControllerBase
         return Ok(updatedUser);
     }
 
-    [HttpPut("UpdateAdultStatus")]
+    [HttpPut("update-adult-status")]
     [Authorize]
     public ActionResult<User> ChangeAdultStatus(UpdateAdultStatus adultStatus)
     {
@@ -84,7 +84,7 @@ public class UserController : ControllerBase
         return Ok(updateUser);
     }
 
-    [HttpPut("UpdateUsername")]
+    [HttpPut("update-username")]
     [Authorize]
     public ActionResult<User> ChangeUsername([FromBody]string username)
     {
