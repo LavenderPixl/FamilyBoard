@@ -10,6 +10,7 @@ export const useAuth = defineStore('auth', {
     },
     actions: {
         setToken: (token: string) => {
+            // @ts-ignore
             this.token = token
             localStorage.setItem('token', token)
         },
