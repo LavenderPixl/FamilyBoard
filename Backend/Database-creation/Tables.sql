@@ -62,4 +62,13 @@ CREATE TABLE goals(
     user_id INT NOT NULL,
     
     CONSTRAINT fk_family FOREIGN KEY(user_id) REFERENCES users(id) ON DELETE CASCADE 
+);
+
+CREATE TABLE refresh_tokens(
+  id SERIAL PRIMARY KEY,
+  token varchar UNIQUE NOT NULL,
+  expiration TIMESTAMP NOT NULL,
+  user_id INT NOT NULL,
+
+  CONSTRAINT fk_user FOREIGN KEY(user_id) REFERENCES users(id) ON DELETE CASCADE
 )
