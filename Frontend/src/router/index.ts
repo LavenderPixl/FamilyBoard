@@ -27,11 +27,14 @@ const router = createRouter({
       component: () => import('../views/SignupView.vue'),
 
     },
-    // {
-    //   path: '/:pathMatch(.*)*',
-    //   name: 'NotFound',
-    //   component: () => import('../views/NotFound.vue')
-    // }
+    {
+      path: '/:pathMatch(.*)*',
+      name: 'NotFound',
+      meta: {
+        hideNavbar: true,
+      },
+      component: () => import('../views/NotFound.vue')
+    }
   ],
 })
 
