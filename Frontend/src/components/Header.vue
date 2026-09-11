@@ -1,11 +1,14 @@
 <script setup lang="ts">
 import router from "@/router";
-import { useAuth } from "@/stores/auth.ts";
+import { authStore } from "../stores/authStore.ts";
+import { userStore } from "../stores/userStore.ts";
 
-const auth = useAuth();
+const auth = authStore();
+const user = userStore();
 
 function logout() {
   auth.logout()
+  user.clearUser()
   router.push("/login")
 }
 </script>
