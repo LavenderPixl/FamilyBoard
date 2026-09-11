@@ -9,8 +9,7 @@ import 'bootstrap-icons/font/bootstrap-icons.css'
 
 import App from './App.vue'
 import router from './router'
-import { authStore } from "@/stores/authStore.ts";
-const apiUrl = import.meta.env.VITE_API_URL
+import { authStore } from "./stores/authStore.ts";
 
 const app = createApp(App)
 
