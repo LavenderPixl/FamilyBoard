@@ -60,7 +60,7 @@ function createUser() {
         <input v-model="password" name="password" placeholder="Indtast dit kodeord" required type="password"/>
         <input v-model="passwordAgain" name="passwordAgain" placeholder="Indtast dit kodeord igen" required type="password"/>
         <button type="submit">Opret bruger</button>
-        <button v-on:click="$router.push('/login')" type="button"><i class="bi-arrow-left"></i> Tilbage til login</button>
+        <button v-on:click="$router.push({name: 'login'})" type="button"><i class="bi-arrow-left"></i> Tilbage til login</button>
       </form>
     </div>
   </main>

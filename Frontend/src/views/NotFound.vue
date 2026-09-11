@@ -9,7 +9,7 @@ const auth = authStore();
   <main>
     <h1>404 - Denne side findes ikke. </h1>
 <!-- Check store, if user is logged in, create link to '/', else '/login' -->
-    <button @click="auth.isLoggedIn ? router.push('/') : router.push('/login')">
+    <button @click="auth.isLoggedIn ? router.push('/') : router.push({name: 'login'})">
       {{ auth.isLoggedIn ? 'Gå til forsiden.' : 'Gå til login.'}}</button>
   </main>
 </template>
