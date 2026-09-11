@@ -44,9 +44,9 @@ public class UserController : ControllerBase
         var userId = Convert.ToInt32(User.FindFirstValue(ClaimTypes.NameIdentifier));
 
         if (!UserDataAccess.DeleteUser(userId))
+            // Internal Server Error
             return StatusCode(500);
         
-        // Internal Server Error
         return Ok();
     }
 
