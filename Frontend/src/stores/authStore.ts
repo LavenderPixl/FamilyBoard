@@ -31,7 +31,7 @@ export const authStore = defineStore('auth', {
             if (typeof this.refreshToken === 'string') {
                 api.refreshJwtToken(this.refreshToken).then(token => {
                         this.updateToken(token.data)
-                    })
+                    }).catch(() => this.logout())
             }
         },
         startRefTimer() {
