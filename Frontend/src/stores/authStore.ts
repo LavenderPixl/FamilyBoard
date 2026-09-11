@@ -1,5 +1,7 @@
-import {defineStore} from "pinia";
+import { defineStore } from "pinia";
 import api from "../api.ts";
+import router from "@/router";
+import { userStore } from "./userStore.ts";
 
 export const authStore = defineStore('auth', {
     state: () => ({
@@ -26,6 +28,8 @@ export const authStore = defineStore('auth', {
             this.refreshToken = null
             localStorage.removeItem('token')
             localStorage.removeItem('refreshToken')
+            userStore().clearUser()
+            router.push({name: 'login'})
         },
         useRefreshToken() {
             if (typeof this.refreshToken === 'string') {

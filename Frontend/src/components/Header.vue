@@ -8,8 +8,6 @@ const user = userStore();
 
 function logout() {
   auth.logout()
-  user.clearUser()
-  router.push("/login")
 }
 </script>
 
