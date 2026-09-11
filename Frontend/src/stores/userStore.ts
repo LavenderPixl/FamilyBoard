@@ -1,27 +1,19 @@
 import {defineStore} from "pinia";
-import type { User } from "../models/user.ts"
+import type { IUser } from "../models/user.ts"
 import api from "../api.ts"
 
-export const user = defineStore("user", {
+export const userStore = defineStore("user", {
     state: () => ({
-            user: null as null | {
-                userId: number;
-                username: string;
-                email: string;
-                points: number;
-                isAdult: boolean;
-                familyId: number;
-            },
-    }),
+            user: null as IUser | null }),
     actions: {
-        setUser(user) {
+        setUser(user: IUser) {
             this.user = user;
         },
         async getUser() {
             const res = await api.getLoggedInUser()
             this.user = res.data;
         },
-        clear() {
+        clearUser() {
             this.user = null;
         },
     },
