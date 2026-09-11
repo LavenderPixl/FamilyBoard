@@ -21,20 +21,20 @@ public class AuthController : ControllerBase
     }
 
     [HttpPost("log-in")]
-    public ActionResult<Tokens> Login(LoginUser loginUser)
+    public ActionResult<LoginReponse> Login(LoginUser loginUser)
     {
         if (!Models.User.IsPasswordValid(loginUser.Email, loginUser.Password)) return Unauthorized();
 
         var user = UserDataAccess.GetUserFromEmail(loginUser.Email);
-        if (user == null) return Problem();
+        if (user == null) return Unauthorized();
         var jwt = GenerateJwtToken(user);
         var refreshToken = GenerateRefreshToken(user.Id);
-        Tokens tokens = new Tokens { Jwt = jwt, RefreshToken = refreshToken };
+        LoginReponse loginReponse = new LoginReponse { Jwt = jwt, RefreshToken = refreshToken, User = user};
         
-        return Ok(tokens);
+        return Ok(loginReponse);
     }
 
-    [HttpGet("refresh-jwt")]
+    [HttpPost("refresh-jwt")]
     public ActionResult<string> RefreshJwt([FromBody]string token)
     {
         var refreshToken = RefreshTokenDataAccess.GetRefreshTokenFromToken(token);
@@ -92,9 +92,10 @@ public class AuthController : ControllerBase
         public string Password { get; set; }
     }
     
-    public class Tokens
+    public class LoginReponse
     {
         public string Jwt { get; set; }
         public string RefreshToken { get; set; }
+        public User User  { get; set; }
     }
 }
