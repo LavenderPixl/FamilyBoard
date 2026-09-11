@@ -11,7 +11,7 @@ const email = ref('');
 const password = ref('');
 const incorrectLogin = ref(false);
 const userCreated = ref(route.query.created === "true");
-
+// const user =
 const auth = useAuth();
 
 // Success message on new user created - Clears when user reloads, so message isn't stuck.
@@ -19,6 +19,7 @@ onMounted(() => {
   if (userCreated.value) {
     history.replaceState(history.state,'','/login');
   }
+  // api.getLoggedInUser()
 })
 
 function login() {
@@ -26,7 +27,7 @@ function login() {
 
   api.login(email.value, password.value)
       .then(res => {
-        auth.setToken(res.data);
+        auth.setToken(res.data.jwt, res.data.refreshToken);
         router.push('/')
         })
       .catch (err => {
