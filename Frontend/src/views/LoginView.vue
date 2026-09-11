@@ -51,7 +51,7 @@ function login() {
         <input v-model="email" name="email" placeholder="Indtast din email" required type="email"/>
         <input v-model="password" name="password" placeholder="Indtast dit kodeord" required type="password"/>
         <button type="submit">Log ind</button>
-        <button v-on:click="$router.push({name: '/signup'})" type="button">Opret ny bruger</button>
+        <button v-on:click="$router.push({name: 'signup'})" type="button">Opret ny bruger</button>
       </form>
     </div>
   </main>
