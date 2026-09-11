@@ -1,8 +1,9 @@
 <script setup lang="ts">
-import api from "../api"
-import { useAuth } from "../stores/auth.ts"
-import {onMounted, ref} from "vue";
 import router from "@/router";
+import api from "../api"
+import { authStore } from "../stores/authStore.ts"
+import { userStore } from "../stores/userStore.ts";
+import { onMounted, ref } from "vue";
 import { useRoute } from "vue-router"
 
 const route = useRoute()
@@ -12,7 +13,7 @@ const password = ref('');
 const incorrectLogin = ref(false);
 const userCreated = ref(route.query.created === "true");
 
-const auth = useAuth();
+const auth = authStore();
 
 // Success message on new user created - Clears when user reloads, so message isn't stuck.
 onMounted(() => {
@@ -26,8 +27,9 @@ function login() {
 
   api.login(email.value, password.value)
       .then(res => {
-        auth.setToken(res.data);
-        router.push('/')
+        auth.setToken(res.data.jwt, res.data.refreshToken);
+        userStore().setUser(res.data.user);
+        router.push({name: 'home'})
         })
       .catch (err => {
         if (err.response?.status === 401) {
@@ -49,7 +51,7 @@ function login() {
         <input v-model="email" name="email" placeholder="Indtast din email" required type="email"/>
         <input v-model="password" name="password" placeholder="Indtast dit kodeord" required type="password"/>
         <button type="submit">Log ind</button>
-        <button v-on:click="$router.push('/signup')" type="button">Opret ny bruger</button>
+        <button v-on:click="$router.push({name: 'signup'})" type="button">Opret ny bruger</button>
       </form>
     </div>
   </main>

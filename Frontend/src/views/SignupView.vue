@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import {ref} from "vue";
+import { ref } from "vue";
 import api from "@/api.ts";
 import router from "@/router";
 
@@ -16,7 +16,8 @@ function checkMatch() {
 }
 
 function createUser() {
-  if (!checkMatch()) { // Check if passwords match
+  // Check if passwords match
+  if (!checkMatch()) {
     error.value = true;
     errorMessage.value = 'Kodeordene matcher ikke.';
     return;
@@ -46,7 +47,6 @@ function createUser() {
         }
       })
 }
-
 </script>
 
 <template>
@@ -60,7 +60,7 @@ function createUser() {
         <input v-model="password" name="password" placeholder="Indtast dit kodeord" required type="password"/>
         <input v-model="passwordAgain" name="passwordAgain" placeholder="Indtast dit kodeord igen" required type="password"/>
         <button type="submit">Opret bruger</button>
-        <button v-on:click="$router.push('/login')" type="button"><i class="bi-arrow-left"></i> Tilbage til login</button>
+        <button v-on:click="$router.push({name: 'login'})" type="button"><i class="bi-arrow-left"></i> Tilbage til login</button>
       </form>
     </div>
   </main>
