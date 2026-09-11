@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import {ref} from "vue";
+import { ref } from "vue";
 import api from "@/api.ts";
 import router from "@/router";
 
@@ -16,7 +16,8 @@ function checkMatch() {
 }
 
 function createUser() {
-  if (!checkMatch()) { // Check if passwords match
+  // Check if passwords match
+  if (!checkMatch()) {
     error.value = true;
     errorMessage.value = 'Kodeordene matcher ikke.';
     return;
@@ -46,7 +47,6 @@ function createUser() {
         }
       })
 }
-
 </script>
 
 <template>

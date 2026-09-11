@@ -2,7 +2,7 @@
 import router from "@/router";
 import api from "../api"
 import { authStore } from "../stores/authStore.ts"
-import {userStore} from "../stores/userStore.ts";
+import { userStore } from "../stores/userStore.ts";
 import { onMounted, ref } from "vue";
 import { useRoute } from "vue-router"
 
@@ -29,7 +29,7 @@ function login() {
       .then(res => {
         auth.setToken(res.data.jwt, res.data.refreshToken);
         userStore().setUser(res.data.user);
-        router.push('/')
+        router.push({name: 'home'})
         })
       .catch (err => {
         if (err.response?.status === 401) {
