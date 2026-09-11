@@ -9,6 +9,7 @@ var AllowSpecificOrigins = "_allowSpecificOrigins";
 var builder = WebApplication.CreateBuilder(args);
 
 Database.ConnectionString = builder.Configuration.GetConnectionString("familyBoard");
+Dapper.DefaultTypeMap.MatchNamesWithUnderscores = true;
 
 var jwtSettings = builder.Configuration.GetSection("Jwt");
 var key = Encoding.UTF8.GetBytes(jwtSettings["Key"]);

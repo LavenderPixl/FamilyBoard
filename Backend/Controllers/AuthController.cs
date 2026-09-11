@@ -1,15 +1,15 @@
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
+using Backend.DataAccess;
 using Backend.Models;
-using Dapper;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 
 namespace Backend.Controllers;
 
 [ApiController]
-[Route("[controller]/")]
+[Route("auth")]
 public class AuthController : ControllerBase
 {
     private readonly IConfiguration _configuration;
@@ -19,20 +19,12 @@ public class AuthController : ControllerBase
         _configuration = configuration;
     }
 
-    // [Route("Auth/login")]
-    [HttpPost("login")]
+    [HttpPost("log-in")]
     public IActionResult Login(LoginUser loginUser)
     {
-        var conn = Database.Database.GetConn();
-        string hashedPasswordQuery = @"SElECT hashed_password FROM users WHERE email = @email";
-        string selectUserQuery = @"SELECT * FROM users WHERE email = @email";
+        if (!Models.User.IsPasswordValid(loginUser.Email, loginUser.Password)) return Unauthorized();
 
-        string? hashedPassword = conn.QueryFirstOrDefault<string>(hashedPasswordQuery, new { email = loginUser.Email });
-        if (hashedPassword == null) return Unauthorized();
-        // Checks if the password matches our hashed
-        if (!BCrypt.Net.BCrypt.EnhancedVerify(loginUser.Password, hashedPassword)) return Unauthorized();
-
-        var user = conn.QueryFirstOrDefault<User>(selectUserQuery, new { email = loginUser.Email });
+        var user = UserDataAccess.GetUserFromEmail(loginUser.Email);
         if (user == null) return Problem();
         var token = GenerateJwtToken(user);
         

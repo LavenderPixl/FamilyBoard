@@ -11,13 +11,13 @@ const HTTP = axios.create({
 
 export default {
     login(email: string, password: string) {
-        return HTTP.post('/Auth/login', {
+        return HTTP.post('/auth/log-in', {
             email: email,
             password: password
         })
     },
     createUser(email: string, username: string, password: string) {
-        return HTTP.post('/User/create-user', {
+        return HTTP.post('/user/create-user', {
             email: email,
             username: username,
             password: password
