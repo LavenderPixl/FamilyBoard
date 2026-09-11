@@ -1,13 +1,13 @@
--- DROP DATABASE IF EXISTS familyBoard;
--- CREATE DATABASE familyBoard;
-\c familyBoard
+-- DROP DATABASE IF EXISTS family_board;
+-- CREATE DATABASE family_board;
+\c family_board
 
 CREATE TABLE families(
     id SERIAL PRIMARY KEY,
     name VARCHAR(32) 
 );
 
-CREATE TABLE familyCodes(
+CREATE TABLE family_codes(
     id SERIAL primary key,
     code CHAR(8) NOT NULL ,
     expiration date NOT NULL,
@@ -40,7 +40,7 @@ CREATE TABLE tasks(
     CONSTRAINT fk_user FOREIGN KEY(user_id) REFERENCES users(id) ON DELETE SET NULL
 );
 
-CREATE TABLE repeatingTasks(
+CREATE TABLE repeating_tasks(
     id SERIAL PRIMARY KEY,
     task VARCHAR(128) NOT NULL,
     reward INT NOT NULL,
@@ -62,4 +62,13 @@ CREATE TABLE goals(
     user_id INT NOT NULL,
     
     CONSTRAINT fk_family FOREIGN KEY(user_id) REFERENCES users(id) ON DELETE CASCADE 
+);
+
+CREATE TABLE refresh_tokens(
+  id SERIAL PRIMARY KEY,
+  token varchar UNIQUE NOT NULL,
+  expiration TIMESTAMP NOT NULL,
+  user_id INT NOT NULL,
+
+  CONSTRAINT fk_user FOREIGN KEY(user_id) REFERENCES users(id) ON DELETE CASCADE
 )

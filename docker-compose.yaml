@@ -27,7 +27,7 @@ services:
       - postgres_data:/var/lib/postgresql
       - ./Backend/Database-creation/:/docker-entrypoint-initdb.d
     environment:
-      POSTGRES_DB: "familyBoard"
+      POSTGRES_DB: "family_board"
       POSTGRES_PASSWORD: ${DB_PASSWORD}
     ports:
       - "${DB_PORT}:5432"
