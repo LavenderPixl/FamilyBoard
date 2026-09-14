@@ -22,5 +22,11 @@ export default {
             username: username,
             password: password
         })
-    }
+    },
+    getLoggedInUser() {
+      return HTTP.get(`/user/get-logged-in-user`);
+    },
+    refreshJwtToken(refreshToken: string) {
+        return HTTP.post(`/auth/refresh-jwt`, refreshToken)
+    },
 }

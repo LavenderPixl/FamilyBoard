@@ -9,11 +9,17 @@ import 'bootstrap-icons/font/bootstrap-icons.css'
 
 import App from './App.vue'
 import router from './router'
-const apiUrl = import.meta.env.VITE_API_URL
+import { authStore } from "./stores/authStore.ts";
 
 const app = createApp(App)
 
 app.use(createPinia())
 app.use(router)
+
+// Starts refresh timer for JWT token on startup (or refresh).
+const auth = authStore()
+if (auth.isLoggedIn) {
+    auth.startRefTimer()
+}
 
 app.mount('#app')
