@@ -23,19 +23,74 @@ public class FamilyController : ControllerBase
         }
         return Ok(family);
     }
-    
-    // [HttpPut("join-family")]
-    // [Authorize]
-    // public IActionResult JoinFamily()
-    // {
-    //     var userId = Convert.ToInt32(User.FindFirstValue(ClaimTypes.NameIdentifier));
-    //     
-    //     var user = UserDataAccess.GetUser(userId);
-    //     if (user == null) return Problem();
-    //     
-    //     var family = FamilyDataAccess.
-    // }
 
+    [HttpDelete("delete-family")]
+    [Authorize]
+    public ActionResult DeleteFamily(int familyId) {
+        var userId = Convert.ToInt32(User.FindFirstValue(ClaimTypes.NameIdentifier));
+        var family = FamilyDataAccess.GetFamily(familyId);
+        bool deleted = FamilyDataAccess.DeleteFamily(familyId);
+        
+        if (!deleted) return Problem();
+        return Ok();
+    }
+
+    [HttpPut("join-family")]
+    [Authorize]
+    public IActionResult JoinFamily(string inviteCode)
+    {
+        var userId = Convert.ToInt32(User.FindFirstValue(ClaimTypes.NameIdentifier));
+        var user = UserDataAccess.GetUser(userId);
+        if (user == null) return Problem();
+        
+        int? familyId = FamilyDataAccess.GetFamilyByCode(inviteCode);
+        if (familyId == null) return Problem();
+        FamilyDataAccess.JoinFamily(userId, familyId);
+        
+        return Ok();
+    }
+
+    [HttpPut("leave-family")]
+    [Authorize]
+    public IActionResult LeaveFamily(int familyId)
+    {
+        var userId = Convert.ToInt32(User.FindFirstValue(ClaimTypes.NameIdentifier));
+        var user = UserDataAccess.GetUser(userId);
+        if (user == null) return Problem();
+        
+        var attemptLeave = FamilyDataAccess.LeaveFamily(userId, familyId);
+        if (!attemptLeave) return Problem();
+        
+        return Ok();
+    }
+    
+    
+    [HttpGet("get-family-members")]
+    [Authorize]
+    public IActionResult GetFamilyMembers()
+    {
+        var userId = Convert.ToInt32(User.FindFirstValue(ClaimTypes.NameIdentifier));
+        var user = UserDataAccess.GetUser(userId);
+        if (user == null) return Problem();
+
+        List<User> members = FamilyDataAccess.GetFamilyMembers(user.FamilyId);
+        if (members.Count < 0 ) return Problem();
+        return Ok(members);
+    }
+
+    [HttpGet("get-family-name")]
+    [Authorize]
+    public IActionResult GetFamilyName()
+    {
+        var userId = Convert.ToInt32(User.FindFirstValue(ClaimTypes.NameIdentifier));
+        var user = UserDataAccess.GetUser(userId);
+        if (user == null) return Problem();
+        
+        Family family = FamilyDataAccess.GetFamily(user.FamilyId);
+        return Ok(family.Name);
+    }
+    
+    
     // Invite codes = family codes  
     [HttpPost("generate-invite")]
     [Authorize]
@@ -49,18 +104,16 @@ public class FamilyController : ControllerBase
             CreatedBy = userId,
             FamilyId = familyId,
             Expiration = new DateTime().AddDays(7),
-            Code = RandomNumberGenerator.GetString("0123456789", 8)
+            Code = RandomNumberGenerator.GetString("0123456789", 8) // Creates a random invite code
         };
 
-        if (!FamilyDataAccess.CreateFamilyInvite(familyCode))
+        // Retries creating the invite code 3 times if it already exists 
+        if (!FamilyDataAccess.CreateFamilyInvite(familyCode)) 
         {
             return Problem();
         }
-        return Ok();
+        return Ok(familyCode.Code);
     }
 
     // leaveFamily
-    // createFamilyInvite
-    // getFamilyMembers
-    // getFamily
 }

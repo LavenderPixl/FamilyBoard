@@ -14,20 +14,87 @@ public class FamilyDataAccess
         Family family = conn.QuerySingle<Family>(insertQuery, new { familyName });
         return family;
     }
-    
-    public static bool JoinFamily(int userId, int familyId)
+
+    public static bool DeleteFamily(int familyId)
+    {
+        string deleteQuery = @"DELETE FROM families WHERE id = @familyId";
+        using var conn = Database.Database.GetConn();
+        
+        return conn.Execute(deleteQuery, new { familyId }) != 0;
+    }
+
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="userId"></param>
+    /// <param name="familyId"></param>
+    /// <returns>Boolean</returns>
+    public static bool JoinFamily(int userId, int? familyId)
     {
         string updateQuery = @"UPDATE users SET family_id = @familyId WHERE id = @userId";
         using var conn = Database.Database.GetConn();
-        
-        conn.Execute(updateQuery, new { familyId, userId });
-        return true;
+
+        return conn.Execute(updateQuery, new { familyId, userId }) == 1;
     }
 
+    public static bool LeaveFamily(int userId, int familyId)
+    {
+        string updateQuery = @"UPDATE users SET family_id = NULL WHERE id = @userId ";
+        using var conn = Database.Database.GetConn();
+        
+        return conn.Execute(updateQuery, new { userId, familyId }) == 1;
+    }
+
+
+    public static Family GetFamily(int familyId)
+    {
+     string selectQuery = @"SELECT * FROM  families WHERE id = @familyId";
+     using var conn = Database.Database.GetConn();
+     
+     Family family = conn.QuerySingle<Family>(selectQuery, new { familyId });
+     return family;
+    }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="code">Invitation code</param>
+    /// <returns>Family ID</returns>
+    public static int? GetFamilyByCode(string familyCode)
+    {
+        string selectQuery = @"SELECT family_id FROM family_codes WHERE code = @familyCode";
+        using var conn = Database.Database.GetConn();
+        
+        return conn.QuerySingle<int>(selectQuery, new { familyCode });
+    }
+    
+    public static List<User> GetFamilyMembers(int familyId)
+    {
+        string selectQuery = @"SELECT * FROM users WHERE family_id = @FamilyId";
+        using var conn = Database.Database.GetConn();
+        
+        List<User> members = conn.Query<User>(selectQuery, new { familyId }).ToList();
+        return members;
+    }
+
+    // For invitation code
     private static string GenerateCode()
     {
         string code = RandomNumberGenerator.GetString("0123456789", 8);
         return code;
+    }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="code">Invite code</param>
+    /// <returns>Boolean</returns>
+    public static bool IsInviteValid(FamilyCode familyCode)
+    {
+        string selectQuery = @"SELECT COUNT(1) FROM family_codes WHERE code = @familyCode";
+        using var conn = Database.Database.GetConn();
+        return conn.ExecuteScalar<bool>(selectQuery, new { familyCode, now = DateTime.UtcNow });
     }
 
     public static bool CreateFamilyInvite(FamilyCode familyCode)
@@ -37,7 +104,7 @@ public class FamilyDataAccess
         using var conn = Database.Database.GetConn();
 
         int loop = 0;
-        while (loop < 3)
+        while (loop < 3) // Max tries, 3
         {
             string generatedCode = GenerateCode();
             var codeExists = conn.ExecuteScalar<bool>
@@ -57,17 +124,11 @@ public class FamilyDataAccess
     // {
     //     
     // }
-    //
-    // public static Family? GetFamily(int familyId)
-    // {
-    //     
-    // }
-    //
-    // public static List<User> GetFamilyMembers(int familyId)
-    // {
-    //     
-    // }
-    //
+    
+
+    
+
+    
 
     //
     // public static bool LeaveFamily(int familyId, int userId)
