@@ -33,7 +33,7 @@ public class FamilyDataAccess
     public static bool CreateFamilyInvite(FamilyCode familyCode)
     {
         string insertQuery = @"INSERT INTO family_codes (code, expiration, created_by, family_id) 
-                               VALUES (@code, @expiration, @created_by, @family_id)";
+                               VALUES (@Code, @Expiration, @CreatedBy, @FamilyId)";
         using var conn = Database.Database.GetConn();
 
         int loop = 0;
@@ -45,10 +45,7 @@ public class FamilyDataAccess
             if (!codeExists)
             {
                 familyCode.Code = generatedCode;
-                conn.Execute(insertQuery, new
-                {
-                    familyCode, familyCode.Expiration, familyCode.CreatedBy, familyCode.FamilyId
-                });
+                conn.Execute(insertQuery, familyCode);
                 return true;
             }
             loop++;
