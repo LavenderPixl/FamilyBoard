@@ -8,7 +8,7 @@ CREATE TABLE families(
 );
 
 CREATE TABLE family_codes(
-    id SERIAL primary key,
+    id SERIAL PRIMARY KEY,
     code CHAR(8) NOT NULL ,
     expiration date NOT NULL,
     family_id INT,
