@@ -7,15 +7,6 @@ CREATE TABLE families(
     name VARCHAR(32) 
 );
 
-CREATE TABLE family_codes(
-    id SERIAL PRIMARY KEY,
-    code CHAR(8) NOT NULL ,
-    expiration date NOT NULL,
-    family_id INT,
-    
-    CONSTRAINT fk_family_codes FOREIGN KEY(family_id) REFERENCES families(id) ON DELETE CASCADE 
-);
-
 CREATE TABLE users(
     id SERIAL PRIMARY KEY,
     username VARCHAR(32) NOT NULL,
@@ -26,6 +17,17 @@ CREATE TABLE users(
     family_id INT,
     
     CONSTRAINT fk_family_users FOREIGN KEY(family_id) REFERENCES families(id) ON DELETE SET NULL
+);
+
+CREATE TABLE family_codes(
+     id SERIAL PRIMARY KEY,
+     code CHAR(8) NOT NULL UNIQUE,
+     expiration date NOT NULL,
+     created_by INT NOT NULL,
+     family_id INT,
+    
+     CONSTRAINT fk_family_codes FOREIGN KEY(family_id) REFERENCES families(id) ON DELETE CASCADE,
+     CONSTRAINT fk_user FOREIGN KEY(created_by) REFERENCES users(id) ON DELETE CASCADE
 );
 
 CREATE TABLE tasks(
