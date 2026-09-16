@@ -44,9 +44,10 @@ public class FamilyController : ControllerBase
         if (user == null) return Problem();
         
         int? familyId = FamilyDataAccess.GetFamilyByCode(inviteCode);
-        if (familyId == null) return NotFound();
-
-        if (user.FamilyId == familyId) return Conflict();
+        
+        if (familyId == null) return NotFound("No family with that ID");
+        if (user.FamilyId == familyId) return Conflict("User is already in family");
+        if (user.FamilyId != 0) return Conflict("User is in another family"); 
         
         FamilyDataAccess.JoinFamily(userId, familyId);
         
