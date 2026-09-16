@@ -103,8 +103,8 @@ public class FamilyController : ControllerBase
         var userId = Convert.ToInt32(User.FindFirstValue(ClaimTypes.NameIdentifier));
         var user = UserDataAccess.GetUser(userId);
         
-        if (user?.FamilyId == 0) return NotFound(); // No family
-        if (!user.IsAdult) return Forbid(); // Not an adult
+        if (user?.FamilyId == 0) return NotFound("No family");
+        if (!user.IsAdult) return Forbid("Not an adult");
         DateTime expiration = DateTime.UtcNow.AddDays(7);
         
         

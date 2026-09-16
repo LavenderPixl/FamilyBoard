@@ -4,7 +4,7 @@ using Dapper;
 
 namespace Backend.DataAccess;
 
-public class FamilyDataAccess
+public static class FamilyDataAccess
 {
     public static Family? CreateFamily(string familyName)
     {
@@ -68,7 +68,6 @@ public class FamilyDataAccess
         using var conn = Database.Database.GetConn();
         
         int? familyId = conn.QuerySingleOrDefault<int?>(selectQuery, new { familyCode });
-        if (familyId == null) return null;
 
         return familyId;
     }
