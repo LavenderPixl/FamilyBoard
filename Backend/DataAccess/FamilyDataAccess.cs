@@ -57,16 +57,20 @@ public class FamilyDataAccess
     }
 
     /// <summary>
-    /// 
+    /// Gets which family the code belongs to, and checks if it's valid, by expiration date.
     /// </summary>
     /// <param name="code">Invitation code</param>
     /// <returns>Family ID</returns>
     public static int? GetFamilyByCode(string familyCode)
     {
-        string selectQuery = @"SELECT family_id FROM family_codes WHERE code = @familyCode";
+        string selectQuery = @"SELECT family_id FROM family_codes WHERE code = @familyCode
+                               AND expiration >= CURRENT_DATE";
         using var conn = Database.Database.GetConn();
         
-        return conn.QuerySingle<int>(selectQuery, new { familyCode });
+        int? familyId = conn.QuerySingleOrDefault<int?>(selectQuery, new { familyCode });
+        if (familyId == null) return null;
+
+        return familyId;
     }
     
     public static List<User> GetFamilyMembers(int familyId)
@@ -84,18 +88,7 @@ public class FamilyDataAccess
         string code = RandomNumberGenerator.GetString("0123456789", 8);
         return code;
     }
-
-    /// <summary>
-    /// 
-    /// </summary>
-    /// <param name="code">Invite code</param>
-    /// <returns>Boolean</returns>
-    public static bool IsInviteValid(FamilyCode familyCode)
-    {
-        string selectQuery = @"SELECT COUNT(1) FROM family_codes WHERE code = @familyCode";
-        using var conn = Database.Database.GetConn();
-        return conn.ExecuteScalar<bool>(selectQuery, new { familyCode, now = DateTime.UtcNow });
-    }
+    
 
     public static bool CreateFamilyInvite(FamilyCode familyCode)
     {

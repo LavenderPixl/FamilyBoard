@@ -21,6 +21,8 @@ public class FamilyController : ControllerBase
         {
             return Conflict();
         }
+
+        UserDataAccess.UpdateAdultStatus(userId, true);
         return Ok(family);
     }
 
@@ -28,10 +30,8 @@ public class FamilyController : ControllerBase
     [Authorize]
     public ActionResult DeleteFamily(int familyId) {
         var userId = Convert.ToInt32(User.FindFirstValue(ClaimTypes.NameIdentifier));
-        var family = FamilyDataAccess.GetFamily(familyId);
-        bool deleted = FamilyDataAccess.DeleteFamily(familyId);
         
-        if (!deleted) return Problem();
+        if (!FamilyDataAccess.DeleteFamily(familyId)) return Problem();
         return Ok();
     }
 
@@ -44,7 +44,8 @@ public class FamilyController : ControllerBase
         if (user == null) return Problem();
         
         int? familyId = FamilyDataAccess.GetFamilyByCode(inviteCode);
-        if (familyId == null) return Problem();
+        if (familyId == null) return NotFound();
+        
         FamilyDataAccess.JoinFamily(userId, familyId);
         
         return Ok();
