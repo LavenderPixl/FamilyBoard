@@ -42,6 +42,12 @@ public static class UserDataAccess
         return user;
     }
 
+    public static bool CheckIfUserExist(int userId)
+    {
+        using var conn = Database.Database.GetConn();
+        return conn.ExecuteScalar<bool>("SELECT COUNT(1) FROM users WHERE id = @userId", new { userId });
+    }
+
     public static string? GetHashedPasswordFromEmail(string email)
     {
         string hashedPasswordQuery = @"SElECT hashed_password FROM users WHERE email = @email";
