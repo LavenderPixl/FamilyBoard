@@ -45,6 +45,8 @@ public class FamilyController : ControllerBase
         
         int? familyId = FamilyDataAccess.GetFamilyByCode(inviteCode);
         if (familyId == null) return NotFound();
+
+        if (user.FamilyId == familyId) return Conflict();
         
         FamilyDataAccess.JoinFamily(userId, familyId);
         
@@ -102,12 +104,14 @@ public class FamilyController : ControllerBase
         
         if (user?.FamilyId == 0) return NotFound(); // No family
         if (!user.IsAdult) return Forbid(); // Not an adult
+        DateTime expiration = DateTime.UtcNow.AddDays(7);
+        
         
         FamilyCode familyCode = new FamilyCode
         {
             CreatedBy = userId,
             FamilyId = user.FamilyId,
-            Expiration = new DateTime().AddDays(7),
+            Expiration = expiration
         };
 
         // Retries creating the invite code 3 times if it already exists 
