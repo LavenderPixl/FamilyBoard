@@ -30,7 +30,7 @@ CREATE TABLE users(
 
 CREATE TABLE tasks(
     id SERIAL PRIMARY KEY,
-    task VARCHAR(128) NOT NULL,
+    name VARCHAR(128) NOT NULL,
     reward INT NOT NULL,
     completed BOOLEAN NOT NULL DEFAULT FALSE,
     family_id INT NOT NULL,
