@@ -95,17 +95,19 @@ public class FamilyController : ControllerBase
     // Invite codes = family codes  
     [HttpPost("generate-invite")]
     [Authorize]
-    public IActionResult GenerateInvite(int familyId)
+    public IActionResult GenerateInvite()
     {
         var userId = Convert.ToInt32(User.FindFirstValue(ClaimTypes.NameIdentifier));
-        var id = familyId;
+        var user = UserDataAccess.GetUser(userId);
+        
+        if (user?.FamilyId == 0) return NotFound(); // No family
+        if (!user.IsAdult) return Forbid(); // Not an adult
         
         FamilyCode familyCode = new FamilyCode
         {
             CreatedBy = userId,
-            FamilyId = familyId,
+            FamilyId = user.FamilyId,
             Expiration = new DateTime().AddDays(7),
-            Code = RandomNumberGenerator.GetString("0123456789", 8) // Creates a random invite code
         };
 
         // Retries creating the invite code 3 times if it already exists 
