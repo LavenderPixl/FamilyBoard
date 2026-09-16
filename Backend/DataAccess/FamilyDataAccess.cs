@@ -112,22 +112,4 @@ public class FamilyDataAccess
         }
         return false;
     }
-    
-    // public static bool DeleteFamily(int familyId)
-    // {
-    //     
-    // }
-    
-
-    
-
-    
-
-    //
-    // public static bool LeaveFamily(int familyId, int userId)
-    // {
-    //     
-    // }
-    //
-
 }

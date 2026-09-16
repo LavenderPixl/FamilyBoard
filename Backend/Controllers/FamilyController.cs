@@ -31,7 +31,7 @@ public class FamilyController : ControllerBase
     public ActionResult DeleteFamily(int familyId) {
         var userId = Convert.ToInt32(User.FindFirstValue(ClaimTypes.NameIdentifier));
         
-        if (!FamilyDataAccess.DeleteFamily(familyId)) return Problem();
+        if (!FamilyDataAccess.DeleteFamily(familyId)) return Problem("Could not find family with that ID");
         return Ok();
     }
 
@@ -118,10 +118,8 @@ public class FamilyController : ControllerBase
         // Retries creating the invite code 3 times if it already exists 
         if (!FamilyDataAccess.CreateFamilyInvite(familyCode)) 
         {
-            return Problem();
+            return Problem("Could not create invite.");
         }
         return Ok(familyCode.Code);
     }
-
-    // leaveFamily
 }
