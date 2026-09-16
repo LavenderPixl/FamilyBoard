@@ -34,10 +34,10 @@ public static class UserDataAccess
     
     public static User? GetUserFromEmail(string email)
     {
-        string SelectQuery = @"SELECT * FROM users WHERE email = @email";
+        string selectQuery = @"SELECT * FROM users WHERE email = @email";
         using var conn = Database.Database.GetConn();
 
-        var user = conn.QueryFirstOrDefault<User>(SelectQuery, new { email = email });
+        var user = conn.QueryFirstOrDefault<User>(selectQuery, new { email = email });
         
         return user;
     }

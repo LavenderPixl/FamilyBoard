@@ -79,7 +79,7 @@ public class AuthController : ControllerBase
         var refreshTokenSettings = _configuration.GetSection("RefreshToken");
         
         string token = Convert.ToBase64String(RandomNumberGenerator.GetBytes(64));
-        DateTime expiration = DateTime.UtcNow.AddHours(Convert.ToInt32(refreshTokenSettings["ExpiryDays"]));
+        DateTime expiration = DateTime.UtcNow.AddDays(Convert.ToInt32(refreshTokenSettings["ExpiryDays"]));
 
         RefreshTokenDataAccess.CreateRefreshToken(token, expiration, userId);
 
