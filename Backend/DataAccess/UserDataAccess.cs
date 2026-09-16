@@ -58,13 +58,13 @@ public static class UserDataAccess
     
     public static bool DeleteUser(int userId)
     {
-        string deletionquery = @"DELETE FROM users WHERE id=@id";
+        string deletionQuery = @"DELETE FROM users WHERE id=@id";
 
         using var conn = Database.Database.GetConn();
 
         try
         {
-            conn.Execute(deletionquery, new { id = userId });
+            conn.Execute(deletionQuery, new { id = userId });
         }
         catch (Exception e)
         {
