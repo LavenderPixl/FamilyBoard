@@ -63,6 +63,10 @@ public class TaskController : ControllerBase
     public ActionResult<Models.Task> UpdateTaskById(UpdateTask updateTask)
     {
         if (updateTask.UserId == 0) updateTask.UserId = null;
+        
+        var userId = Convert.ToInt32(User.FindFirstValue(ClaimTypes.NameIdentifier));
+        var user = UserDataAccess.GetUser(userId);
+        if (!user.IsAdult) return Unauthorized("A non adult can not update a task");
 
         var updatedTask = TaskDataAccess.UpdateTask(updateTask.Id, updateTask.name, updateTask.Reward, updateTask.UserId);
         if (updatedTask == null) return Problem();
@@ -104,7 +108,7 @@ public class TaskController : ControllerBase
         return Ok(updatedTask);
     }
 
-    [HttpDelete]
+    [HttpDelete()]
     [Authorize]
     public IActionResult DeleteTask(int id)
     {
