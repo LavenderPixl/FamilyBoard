@@ -30,8 +30,15 @@ public class FamilyController : ControllerBase
     [Authorize]
     public ActionResult DeleteFamily(int familyId) {
         var userId = Convert.ToInt32(User.FindFirstValue(ClaimTypes.NameIdentifier));
+        var user = UserDataAccess.GetUser(userId);
+        if (user == null) return NotFound("User with this ID, not found");
+
+        var family = FamilyDataAccess.GetFamily(familyId);
+        if (family == null) return NotFound("Family with this ID, not found");
         
+        if (!user.IsAdult) return Unauthorized("A non adult can not make a task");
         if (!FamilyDataAccess.DeleteFamily(familyId)) return Problem("Could not find family with that ID");
+
         return Ok();
     }
 
