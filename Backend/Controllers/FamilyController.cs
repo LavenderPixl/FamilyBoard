@@ -50,6 +50,8 @@ public class FamilyController : ControllerBase
         if (user.FamilyId != 0) return Conflict("User is in another family"); 
         
         FamilyDataAccess.JoinFamily(userId, familyId);
+        UserDataAccess.UpdateAdultStatus(userId, false);
+        
         
         return Ok();
     }
