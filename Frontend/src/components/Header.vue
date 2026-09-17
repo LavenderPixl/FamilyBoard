@@ -2,27 +2,30 @@
 import router from '@/router'
 import { authStore } from '../stores/authStore.ts'
 import { userStore } from '../stores/userStore.ts'
-import { ref } from 'vue'
-
+import { onMounted, ref } from 'vue'
 
 const auth = authStore()
 const user = userStore()
-const isInFamily = ref(isUserInFamily())
+const isInFamily = ref(false)
 
 function logout() {
   auth.logout()
 }
 
-function isUserInFamily (){
+async function isUserInFamily() {
+  await user.getUser()
   
-  console.log("Header Update")
-  if (user.user !== null){
-    if (user.user.familyId !== 0){
-      return true;
+  if (user.user !== null) {
+    if (user.user.familyId !== 0) {
+      return true
     }
   }
-  return false;
+  return false
 }
+
+onMounted(async () =>{
+  isInFamily.value = await isUserInFamily()
+})
 </script>
 
 <template>
