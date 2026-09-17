@@ -11,19 +11,19 @@ public class TaskController : ControllerBase
 {
     [HttpPost()]
     [Authorize]
-    public ActionResult<Models.Task> CreateTask(NewTask newTask)
+    public ActionResult<Models.Task> CreateTask(TaskDto taskDto)
     {
         var userId = Convert.ToInt32(User.FindFirstValue(ClaimTypes.NameIdentifier));
         var user = UserDataAccess.GetUser(userId);
-        if (newTask.UserId == 0) newTask.UserId = null;
+        if (taskDto.UserId == 0) taskDto.UserId = null;
 
         if (!user.IsAdult) return Unauthorized("A non adult can not make a task");
         
-        if (newTask.UserId != null)
-            if (!UserDataAccess.CheckIfUserExist((int)newTask.UserId))
+        if (taskDto.UserId != null)
+            if (!UserDataAccess.CheckIfUserExist((int)taskDto.UserId))
                 return Conflict("The assigned user does not exist");
 
-        var task = TaskDataAccess.CreateTask(newTask.Name, newTask.Reward, user.FamilyId, newTask.UserId);
+        var task = TaskDataAccess.CreateTask(taskDto.Name, taskDto.Reward, user.FamilyId, taskDto.UserId);
         if (task == null) return Problem();
 
         return Ok(task);
@@ -58,23 +58,23 @@ public class TaskController : ControllerBase
         return Ok(TaskDataAccess.GetTasksForUser(userId));
     }
 
-    [HttpPut]
+    [HttpPatch]
     [Authorize]
-    public ActionResult<Models.Task> UpdateTaskById(UpdateTask updateTask)
+    public ActionResult<Models.Task> UpdateTaskById(int taskId, TaskDto taskDto)
     {
-        if (updateTask.UserId == 0) updateTask.UserId = null;
+        if (taskDto.UserId == 0) taskDto.UserId = null;
         
         var userId = Convert.ToInt32(User.FindFirstValue(ClaimTypes.NameIdentifier));
         var user = UserDataAccess.GetUser(userId);
         if (!user.IsAdult) return Unauthorized("A non adult can not update a task");
 
-        var updatedTask = TaskDataAccess.UpdateTask(updateTask.Id, updateTask.name, updateTask.Reward, updateTask.UserId);
+        var updatedTask = TaskDataAccess.UpdateTask(taskId, taskDto.Name, taskDto.Reward, taskDto.UserId);
         if (updatedTask == null) return Problem();
 
         return Ok(updatedTask);
     }
 
-    [HttpPut("mark-task-as-completed")]
+    [HttpPatch("mark-task-as-completed")]
     [Authorize]
     public ActionResult<Models.Task> MarkTaskAsCompleted(int id)
     {
@@ -90,7 +90,7 @@ public class TaskController : ControllerBase
         return Ok(updatedTask);
     }
     
-    [HttpPut("unmark-task-as-completed")]
+    [HttpPatch("unmark-task-as-completed")]
     [Authorize]
     public ActionResult<Models.Task> UnmarkTaskAsCompleted(int id)
     {
@@ -118,17 +118,9 @@ public class TaskController : ControllerBase
         return Ok();
     }
     
-    public class NewTask
+    public class TaskDto
     {
         public string Name { get; set; }
-        public int Reward { get; set; }
-        public int? UserId { get; set; }
-    }
-    
-    public class UpdateTask
-    {
-        public int Id { get; set; }
-        public string name { get; set; }
         public int Reward { get; set; }
         public int? UserId { get; set; }
     }

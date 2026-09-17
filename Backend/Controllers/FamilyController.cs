@@ -35,7 +35,7 @@ public class FamilyController : ControllerBase
         return Ok();
     }
 
-    [HttpPut("join-family")]
+    [HttpPatch("join-family")]
     [Authorize]
     public IActionResult JoinFamily(string inviteCode)
     {
@@ -56,7 +56,7 @@ public class FamilyController : ControllerBase
         return Ok();
     }
 
-    [HttpPut("leave-family")]
+    [HttpPatch("leave-family")]
     [Authorize]
     public IActionResult LeaveFamily(int familyId)
     {

@@ -50,7 +50,7 @@ public class UserController : ControllerBase
         return Ok();
     }
 
-    [HttpPut("update-password")]
+    [HttpPatch("update-password")]
     [Authorize]
     public IActionResult ChangePassword(UpdatePassword updatePassword)
     {
@@ -64,27 +64,27 @@ public class UserController : ControllerBase
         return Ok();
     }
     
-    [HttpPut("give-points")]
+    [HttpPatch("give-points")]
     [Authorize]
-    public ActionResult<User> GivePoints(PointsToGive pointsToGive)
+    public ActionResult<User> GivePoints(int userId, PointsToGive pointsToGive)
     {
-        if (!UserDataAccess.AddPoints(pointsToGive.Id, pointsToGive.Amount)) return NotFound("dsa");
+        if (!UserDataAccess.AddPoints(userId, pointsToGive.Amount)) return NotFound("dsa");
 
-        var updatedUser = UserDataAccess.GetUser(pointsToGive.Id);
+        var updatedUser = UserDataAccess.GetUser(userId);
         return Ok(updatedUser);
     }
 
-    [HttpPut("update-adult-status")]
+    [HttpPatch("update-adult-status")]
     [Authorize]
-    public ActionResult<User> ChangeAdultStatus(UpdateAdultStatus adultStatus)
+    public ActionResult<User> ChangeAdultStatus(int userId, UpdateAdultStatus adultStatus)
     {
-        if (!UserDataAccess.UpdateAdultStatus(adultStatus.UserId, adultStatus.IsAdult)) return NotFound();
+        if (!UserDataAccess.UpdateAdultStatus(userId, adultStatus.IsAdult)) return NotFound();
 
-        var updateUser = UserDataAccess.GetUser(adultStatus.UserId);
+        var updateUser = UserDataAccess.GetUser(userId);
         return Ok(updateUser);
     }
 
-    [HttpPut("update-username")]
+    [HttpPatch("update-username")]
     [Authorize]
     public ActionResult<User> ChangeUsername([FromBody]string username)
     {
@@ -109,13 +109,11 @@ public class UserController : ControllerBase
 
     public class PointsToGive
     {
-        public int Id { get; set; }
         public int Amount { get; set; }
     }
     
     public class UpdateAdultStatus
     {
-        public int UserId { get; set; }
         public bool IsAdult { get; set; }
     }
     
