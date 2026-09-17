@@ -5,18 +5,25 @@ namespace Backend.DataAccess;
 
 public static class GoalDataAccess
 {
-    public static Goal? CreateGoal(string name, int cost, int userId)
+    public static Goal CreateGoal(string name, int cost, int userId)
     {
-        string insertQuery = @"INSERT INTO goals(name, cost, user_id) VALUES(@name, @cost, @userid)";
+        string insertQuery = @"INSERT INTO goals(name, cost, user_id) VALUES(@name, @cost, @userid)
+                                RETURNING id, name, progress, cost, user_id";
         using var conn = Database.Database.GetConn();
 
         Goal goal = conn.QuerySingle<Goal>(insertQuery, new { name, cost, userId});
         return goal;
     }
 
-    public static bool? DeleteGoal(int goalId)
+    public static bool DeleteGoal(int goalId)
     {
         string deleteQuery = @"DELETE FROM goals WHERE id = @goalId";
+        // string selectQuery = @"SELECT * FROM goals WHERE user_id = @userId";
+        // Get id of user from goal
+        // If goal belongs to user, set current goal to null 
+        
+        
+        
         using var conn = Database.Database.GetConn();
 
         try
@@ -61,7 +68,7 @@ public static class GoalDataAccess
         return conn.Execute(updateQuery, new { userId, goalId }) == 1;
     }
 
-    public static Goal MakeActive(int userId, int goalId)
+    public static bool MakeActive(int userId, int goalId)
     {
         string updateQuery = @"UPDATE users  SET current_goal = @goalId  WHERE id = @userId";
         using var conn = Database.Database.GetConn();
