@@ -1,0 +1,111 @@
+using Dapper;
+
+namespace Backend.DataAccess;
+
+public class TaskDataAccess
+{
+    public static Models.Task? CreateTask(string name, int reward, int familyId, int? userId)
+    {
+        string insertQuery = @"INSERT INTO tasks (name, reward, family_id, user_id) 
+                                    VALUES (@name, @reward, @familyId, @userId)
+                                    RETURNING id";
+        string selectQuery = @"SELECT tasks.id, name, reward, completed, tasks.family_id, user_id, username FROM tasks 
+                                    LEFT JOIN users u on tasks.user_id = u.id
+                                    WHERE tasks.id = @id";
+        using var conn = Database.Database.GetConn();
+
+        int? taskId = conn.QueryFirstOrDefault<int>(insertQuery, new { name, reward, familyId, userId });
+        if (taskId == null) return null;
+
+        Models.Task? task = conn.QueryFirstOrDefault<Models.Task>(selectQuery, new { id = taskId });
+        return task;
+    }
+
+    public static Models.Task? GetTask(int id)
+    {
+        string selectQuery = @"SELECT tasks.id, name, reward, completed, tasks.family_id, user_id, username FROM tasks 
+                                    LEFT JOIN users u on tasks.user_id = u.id
+                                    WHERE tasks.id = @id";
+        using var conn = Database.Database.GetConn();
+
+        Models.Task? task = conn.QueryFirstOrDefault<Models.Task>(selectQuery, new { id });
+        return task;
+    }
+
+    public static List<Models.Task> GetTasksForFamily(int familyId)
+    {
+        string selectQuery = @"SELECT tasks.id, name, reward, completed, tasks.family_id, user_id, username FROM tasks
+                                    LEFT JOIN public.users u on tasks.user_id = u.id
+                                    WHERE tasks.family_id = @familyId";
+        using var conn = Database.Database.GetConn();
+
+        var task = conn.Query<Models.Task>(selectQuery, new { familyId }).ToList();
+        return task;
+    }
+    
+    public static List<Models.Task> GetTasksForUser(int userId)
+    {
+        string selectQuery = @"SELECT tasks.id, name, reward, completed, tasks.family_id, user_id, username FROM tasks
+                                    LEFT JOIN public.users u on tasks.user_id = u.id
+                                    WHERE tasks.user_id = @userId";
+        using var conn = Database.Database.GetConn();
+
+        var tasks = conn.Query<Models.Task>(selectQuery, new { userId }).ToList();
+        return tasks;
+    }
+
+    public static Models.Task? UpdateTask(int id, string name, int reward, int? userId)
+    {
+        string updateQuery = @"UPDATE tasks SET name = @name, reward = @reward, user_id = @userId WHERE id = @id";
+        string selectQuery = @"SELECT tasks.id, name, reward, completed, tasks.family_id, user_id, username FROM tasks 
+                                    LEFT JOIN users u on tasks.user_id = u.id
+                                    WHERE tasks.id = @id";
+        using var conn = Database.Database.GetConn();
+
+        conn.Execute(updateQuery, new {id, name, reward, userId});
+        var updatedTask = conn.QueryFirstOrDefault<Models.Task>(selectQuery, new {id});
+        return updatedTask;
+    }
+
+    public static bool UpdateCompletedStatus(int id, int reward, bool completed, int userId )
+    {
+        string updateUserQuery = @"UPDATE users SET points = points + @reward WHERE id = @userID";
+        string updateTaskQuery = @"Update tasks SET completed = @completed WHERE id = @id";
+        using var conn = Database.Database.GetConn();
+
+        using (var tran = conn.BeginTransaction())
+        {
+            try
+            {
+                conn.Execute(updateUserQuery, new { reward, userId });
+                conn.Execute(updateTaskQuery, new { id, completed });
+                tran.Commit();
+                return true;
+            }
+            catch
+            {
+                tran.Rollback();
+                return false;
+            }
+        }
+    }
+
+    public static bool DeleteTask(int id)
+    {
+        string deletionQuery = @"DELETE FROM tasks WHERE id = @id";
+
+        using var conn = Database.Database.GetConn();
+
+        try
+        {
+            conn.Execute(deletionQuery, new { id });
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            return false;
+        }
+
+        return true;
+    }
+}
