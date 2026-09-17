@@ -15,6 +15,7 @@ CREATE TABLE users(
     points INT NOT NULL DEFAULT 0,
     is_adult BOOLEAN NOT NULL DEFAULT FALSE,
     family_id INT,
+    current_goal INT,
     
     CONSTRAINT fk_family_users FOREIGN KEY(family_id) REFERENCES families(id) ON DELETE SET NULL
 );
@@ -58,12 +59,12 @@ CREATE TABLE repeating_tasks(
 
 CREATE TABLE goals(
     id SERIAL PRIMARY KEY,
-    goal VARCHAR(128) NOT NULL,
+    name VARCHAR(128) NOT NULL,
     progress INT NOT NULL DEFAULT 0,
     cost INT NOT NULL,
     user_id INT NOT NULL,
-    
-    CONSTRAINT fk_family FOREIGN KEY(user_id) REFERENCES users(id) ON DELETE CASCADE 
+
+    CONSTRAINT fk_users FOREIGN KEY(user_id) REFERENCES users(id) ON DELETE CASCADE 
 );
 
 CREATE TABLE refresh_tokens(
@@ -73,4 +74,7 @@ CREATE TABLE refresh_tokens(
   user_id INT NOT NULL,
 
   CONSTRAINT fk_user FOREIGN KEY(user_id) REFERENCES users(id) ON DELETE CASCADE
-)
+);
+
+
+ALTER TABLE users ADD CONSTRAINT fk_goals_users FOREIGN KEY (current_goal) REFERENCES goals(id) ON DELETE SET NULL

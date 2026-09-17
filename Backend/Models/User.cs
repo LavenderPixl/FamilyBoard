@@ -15,6 +15,7 @@ public class User
     public int Points { get; set; }
     public bool IsAdult { get; set; }
     public int FamilyId { get; set; }
+    public int CurrentGoal { get; set; }
     
     public static bool IsPasswordValid(string email, string password)
     {
