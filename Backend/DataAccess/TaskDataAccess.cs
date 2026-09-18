@@ -67,10 +67,11 @@ public class TaskDataAccess
         return updatedTask;
     }
 
-    public static bool UpdateCompletedStatus(int id, int reward, bool completed, int userId )
+    public static bool UpdateCompletedStatus(int id, int reward, bool completed, int userId, int? goalId)
     {
         string updateUserQuery = @"UPDATE users SET points = points + @reward WHERE id = @userID";
-        string updateTaskQuery = @"Update tasks SET completed = @completed WHERE id = @id";
+        string updateTaskQuery = @"UPDATE tasks SET completed = @completed, goal_id = @goalId WHERE id = @id";
+        string updateGoalQuery = @"UPDATE goals SET progress = progress + @reward WHERE id = @goalId";
         using var conn = Database.Database.GetConn();
 
         using (var tran = conn.BeginTransaction())
@@ -78,7 +79,8 @@ public class TaskDataAccess
             try
             {
                 conn.Execute(updateUserQuery, new { reward, userId });
-                conn.Execute(updateTaskQuery, new { id, completed });
+                conn.Execute(updateTaskQuery, new { id, completed, goalId });
+                conn.Execute(updateGoalQuery, new { reward, userId });
                 tran.Commit();
                 return true;
             }

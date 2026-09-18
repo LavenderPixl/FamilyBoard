@@ -82,11 +82,12 @@ public class TaskController : ControllerBase
         if (task == null) return NotFound("Could not find the task");
         if (task.Completed) return Conflict("Task is already completed");
         if (task.UserId == null) return Conflict("No user is assigned to the task ");
-
-        var taskUpdated = TaskDataAccess.UpdateCompletedStatus(id, task.Reward, true, (int)task.UserId);
+        
+        var taskUpdated = TaskDataAccess.UpdateCompletedStatus(
+            id, task.Reward, true, (int)task.UserId, task.GoalId);
         if (!taskUpdated) return Problem();
-
         var updatedTask = TaskDataAccess.GetTask(id);
+        
         return Ok(updatedTask);
     }
     
@@ -94,14 +95,19 @@ public class TaskController : ControllerBase
     [Authorize]
     public ActionResult<Models.Task> UnmarkTaskAsCompleted(int id)
     {
+        var userId = Convert.ToInt32(User.FindFirstValue(ClaimTypes.NameIdentifier));
+        var user = UserDataAccess.GetUser(userId);
+        if (user == null) return Problem("Cannot find a user with this id");
+        
         var task = TaskDataAccess.GetTask(id);
         if (task == null) return NotFound("Could not find the task");
         if (!task.Completed) return Conflict("Task is already not completed");
         if (task.UserId == null) return Conflict("No user is assigned to the task ");
-
+        
         int pointsToBeRevert = task.Reward * -1;
 
-        var taskUpdated = TaskDataAccess.UpdateCompletedStatus(id, pointsToBeRevert, false, (int)task.UserId);
+        var taskUpdated = TaskDataAccess.UpdateCompletedStatus(
+            id, pointsToBeRevert, false, (int)task.UserId, task.GoalId);
         if (!taskUpdated) return Problem();
 
         var updatedTask = TaskDataAccess.GetTask(id);
