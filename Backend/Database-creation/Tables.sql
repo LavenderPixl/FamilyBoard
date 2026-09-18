@@ -15,7 +15,7 @@ CREATE TABLE users(
     points INT NOT NULL DEFAULT 0,
     is_adult BOOLEAN NOT NULL DEFAULT FALSE,
     family_id INT,
-    current_goal INT,
+    current_goal_id INT,
     
     CONSTRAINT fk_family_users FOREIGN KEY(family_id) REFERENCES families(id) ON DELETE SET NULL
 );
@@ -31,6 +31,17 @@ CREATE TABLE family_codes(
      CONSTRAINT fk_user FOREIGN KEY(created_by) REFERENCES users(id) ON DELETE CASCADE
 );
 
+CREATE TABLE goals(
+    id SERIAL PRIMARY KEY,
+    name VARCHAR(128) NOT NULL,
+    progress INT NOT NULL DEFAULT 0,
+    cost INT NOT NULL,
+    user_id INT NOT NULL,
+    completed BOOLEAN GENERATED ALWAYS AS ( progress >= cost ),
+    
+    CONSTRAINT fk_users FOREIGN KEY(user_id) REFERENCES users(id) ON DELETE CASCADE
+);
+
 CREATE TABLE tasks(
     id SERIAL PRIMARY KEY,
     name VARCHAR(128) NOT NULL,
@@ -38,9 +49,11 @@ CREATE TABLE tasks(
     completed BOOLEAN NOT NULL DEFAULT FALSE,
     family_id INT NOT NULL,
     user_id INT,
+    goal_id INT,
 
     CONSTRAINT fk_family FOREIGN KEY(family_id) REFERENCES families(id) ON DELETE CASCADE,
-    CONSTRAINT fk_user FOREIGN KEY(user_id) REFERENCES users(id) ON DELETE SET NULL
+    CONSTRAINT fk_user FOREIGN KEY(user_id) REFERENCES users(id) ON DELETE SET NULL,
+    CONSTRAINT fk_goal FOREIGN KEY (goal_id) REFERENCES goals(id) ON DELETE SET NULL
 );
 
 CREATE TABLE repeating_tasks(
@@ -57,16 +70,6 @@ CREATE TABLE repeating_tasks(
     CONSTRAINT fk_user FOREIGN KEY(user_id) REFERENCES users(id) ON DELETE CASCADE
 );
 
-CREATE TABLE goals(
-    id SERIAL PRIMARY KEY,
-    name VARCHAR(128) NOT NULL,
-    progress INT NOT NULL DEFAULT 0,
-    cost INT NOT NULL,
-    user_id INT NOT NULL,
-
-    CONSTRAINT fk_users FOREIGN KEY(user_id) REFERENCES users(id) ON DELETE CASCADE 
-);
-
 CREATE TABLE refresh_tokens(
   id SERIAL PRIMARY KEY,
   token varchar UNIQUE NOT NULL,
@@ -77,4 +80,4 @@ CREATE TABLE refresh_tokens(
 );
 
 
-ALTER TABLE users ADD CONSTRAINT fk_goals_users FOREIGN KEY (current_goal) REFERENCES goals(id) ON DELETE SET NULL
+ALTER TABLE users ADD CONSTRAINT fk_goals_users FOREIGN KEY (current_goal_id) REFERENCES goals(id) ON DELETE SET NULL
