@@ -14,7 +14,7 @@ function logout() {
 
 async function isUserInFamily() {
   await user.getUser()
-  
+
   if (user.user !== null) {
     if (user.user.familyId !== 0) {
       return true
