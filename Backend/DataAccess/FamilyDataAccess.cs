@@ -52,7 +52,7 @@ public static class FamilyDataAccess
         string selectQuery = @"SELECT * FROM  families WHERE id = @familyId";
         using var conn = Database.Database.GetConn();
      
-        Family family = conn.QuerySingle<Family>(selectQuery, new { familyId });
+        Family? family = conn.QueryFirstOrDefault<Family>(selectQuery, new { familyId });
         return family;
     }
 

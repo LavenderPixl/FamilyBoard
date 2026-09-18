@@ -13,7 +13,7 @@ public class FamilyController : ControllerBase
 {
     [HttpPost("create-family")]
     [Authorize]
-    public ActionResult CreateFamily(string familyName)
+    public ActionResult<Family> CreateFamily(string familyName)
     {
         var userId = Convert.ToInt32(User.FindFirstValue(ClaimTypes.NameIdentifier));
         var family = FamilyDataAccess.CreateFamily(familyName);
@@ -80,7 +80,7 @@ public class FamilyController : ControllerBase
     
     [HttpGet("get-family-members")]
     [Authorize]
-    public IActionResult GetFamilyMembers()
+    public ActionResult<List<User>> GetFamilyMembers()
     {
         var userId = Convert.ToInt32(User.FindFirstValue(ClaimTypes.NameIdentifier));
         var user = UserDataAccess.GetUser(userId);
@@ -93,7 +93,7 @@ public class FamilyController : ControllerBase
 
     [HttpGet("get-family-name")]
     [Authorize]
-    public IActionResult GetFamilyName()
+    public ActionResult<string> GetFamilyName()
     {
         var userId = Convert.ToInt32(User.FindFirstValue(ClaimTypes.NameIdentifier));
         var user = UserDataAccess.GetUser(userId);
@@ -107,7 +107,7 @@ public class FamilyController : ControllerBase
     // Invite codes = family codes  
     [HttpPost("generate-invite")]
     [Authorize]
-    public IActionResult GenerateInvite()
+    public ActionResult<string> GenerateInvite()
     {
         var userId = Convert.ToInt32(User.FindFirstValue(ClaimTypes.NameIdentifier));
         var user = UserDataAccess.GetUser(userId);
