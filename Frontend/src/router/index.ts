@@ -15,7 +15,7 @@ const router = createRouter({
       meta: {
         requiresAuth: true,
       },
-      component: HomeView,
+      component: () => import('../views/HomeView.vue'),
     },
     {
       path:'/login',
@@ -46,10 +46,20 @@ const router = createRouter({
 })
 
 // Routes user to login, if they aren't logged in/auth isn't valid and if view has "requiresAuth" meta.
-router.beforeEach((to) => {
+router.beforeEach(async (to) => {
   const auth = authStore()
+  const user = userStore()
+
   if (to.meta.requiresAuth && !auth.isLoggedIn) {
-    return {name: "login", component: LoginView}
+    return { name: 'login' }
+  }
+  if (auth.isLoggedIn && !user.user) {
+    try {
+      await user.getUser()
+    } catch {
+      auth.logout()
+      return { name: 'login' }
+    }
   }
 })
 
