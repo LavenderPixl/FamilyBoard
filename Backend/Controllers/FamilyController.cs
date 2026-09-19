@@ -36,7 +36,7 @@ public class FamilyController : ControllerBase
         var family = FamilyDataAccess.GetFamily(familyId);
         if (family == null) return NotFound("Family with this ID, not found");
         
-        if (!user.IsAdult) return Unauthorized("A non adult can not make a task");
+        if (!user.IsAdult) return Unauthorized("Only an adult can delete a family");
         if (!FamilyDataAccess.DeleteFamily(familyId)) return Problem("Could not find family with that ID");
 
         return Ok();
