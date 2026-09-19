@@ -17,6 +17,7 @@ public class TaskController : ControllerBase
         var user = UserDataAccess.GetUser(userId);
         if (taskDto.UserId == 0) taskDto.UserId = null;
 
+        if (user.FamilyId == null) return Unauthorized("You are not in a family");
         if (!user.IsAdult) return Unauthorized("A non adult can not make a task");
         
         if (taskDto.UserId != null)
@@ -62,6 +63,9 @@ public class TaskController : ControllerBase
     [Authorize]
     public ActionResult<Models.Task> UpdateTaskById(int taskId, TaskDto taskDto)
     {
+        var task = TaskDataAccess.GetTask(taskId);
+        if (task == null) return NotFound("Could not find a task with that id");
+        
         if (taskDto.UserId == 0) taskDto.UserId = null;
         
         var userId = Convert.ToInt32(User.FindFirstValue(ClaimTypes.NameIdentifier));
