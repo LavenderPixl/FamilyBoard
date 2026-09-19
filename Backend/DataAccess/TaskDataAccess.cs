@@ -80,7 +80,10 @@ public class TaskDataAccess
             {
                 conn.Execute(updateUserQuery, new { reward, userId });
                 conn.Execute(updateTaskQuery, new { id, completed, goalId });
-                conn.Execute(updateGoalQuery, new { reward, userId });
+                if (goalId != null)
+                {
+                    conn.Execute(updateGoalQuery, new { reward, userId });
+                }
                 tran.Commit();
                 return true;
             }
