@@ -47,13 +47,13 @@ public static class FamilyDataAccess
     }
 
 
-    public static Family GetFamily(int familyId)
+    public static Family? GetFamily(int familyId)
     {
-     string selectQuery = @"SELECT * FROM  families WHERE id = @familyId";
-     using var conn = Database.Database.GetConn();
+        string selectQuery = @"SELECT * FROM  families WHERE id = @familyId";
+        using var conn = Database.Database.GetConn();
      
-     Family family = conn.QuerySingle<Family>(selectQuery, new { familyId });
-     return family;
+        Family? family = conn.QueryFirstOrDefault<Family>(selectQuery, new { familyId });
+        return family;
     }
 
     /// <summary>

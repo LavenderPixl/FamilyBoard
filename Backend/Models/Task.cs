@@ -9,4 +9,5 @@ public class Task
     public int FamilyId { get; set; }
     public int? UserId { get; set; }
     public string? Username { get; set; }
+    public int? GoalId { get; set; }
 }

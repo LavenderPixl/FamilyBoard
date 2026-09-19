@@ -7,13 +7,4 @@ public class FamilyCode
     public DateTime Expiration { get; set; }
     public int CreatedBy { get; set; } 
     public int FamilyId { get; set; }
-
-    public bool IsValid()
-    {
-        if (Expiration < DateTime.UtcNow)
-        {
-            return false;
-        }
-        return true;
-    }
 }

@@ -17,6 +17,7 @@ public class TaskController : ControllerBase
         var user = UserDataAccess.GetUser(userId);
         if (taskDto.UserId == 0) taskDto.UserId = null;
 
+        if (user.FamilyId == 0) return Unauthorized("You are not in a family");
         if (!user.IsAdult) return Unauthorized("A non adult can not make a task");
         
         if (taskDto.UserId != null)
@@ -62,6 +63,9 @@ public class TaskController : ControllerBase
     [Authorize]
     public ActionResult<Models.Task> UpdateTaskById(int taskId, TaskDto taskDto)
     {
+        var task = TaskDataAccess.GetTask(taskId);
+        if (task == null) return NotFound("Could not find a task with that id");
+        
         if (taskDto.UserId == 0) taskDto.UserId = null;
         
         var userId = Convert.ToInt32(User.FindFirstValue(ClaimTypes.NameIdentifier));
@@ -79,14 +83,21 @@ public class TaskController : ControllerBase
     public ActionResult<Models.Task> MarkTaskAsCompleted(int id)
     {
         var task = TaskDataAccess.GetTask(id);
+        
         if (task == null) return NotFound("Could not find the task");
         if (task.Completed) return Conflict("Task is already completed");
         if (task.UserId == null) return Conflict("No user is assigned to the task ");
+        
+        var user = UserDataAccess.GetUser(task.UserId.Value);
+        
+        if (user == null)  return NotFound("Could not find the user");
+        if (user.FamilyId == null) return Unauthorized("User is not in a family");
 
-        var taskUpdated = TaskDataAccess.UpdateCompletedStatus(id, task.Reward, true, (int)task.UserId);
+        var taskUpdated = TaskDataAccess.UpdateCompletedStatus(
+            id, task.Reward, true, (int)task.UserId, task.GoalId);
         if (!taskUpdated) return Problem();
-
         var updatedTask = TaskDataAccess.GetTask(id);
+        
         return Ok(updatedTask);
     }
     
@@ -94,14 +105,19 @@ public class TaskController : ControllerBase
     [Authorize]
     public ActionResult<Models.Task> UnmarkTaskAsCompleted(int id)
     {
+        var userId = Convert.ToInt32(User.FindFirstValue(ClaimTypes.NameIdentifier));
+        var user = UserDataAccess.GetUser(userId);
+        if (user == null) return Problem("Cannot find a user with this id");
+        
         var task = TaskDataAccess.GetTask(id);
         if (task == null) return NotFound("Could not find the task");
         if (!task.Completed) return Conflict("Task is already not completed");
         if (task.UserId == null) return Conflict("No user is assigned to the task ");
-
+        
         int pointsToBeRevert = task.Reward * -1;
 
-        var taskUpdated = TaskDataAccess.UpdateCompletedStatus(id, pointsToBeRevert, false, (int)task.UserId);
+        var taskUpdated = TaskDataAccess.UpdateCompletedStatus(
+            id, pointsToBeRevert, false, (int)task.UserId, task.GoalId);
         if (!taskUpdated) return Problem();
 
         var updatedTask = TaskDataAccess.GetTask(id);
