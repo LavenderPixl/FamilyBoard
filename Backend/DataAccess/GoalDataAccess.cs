@@ -71,7 +71,7 @@ public static class GoalDataAccess
         string selectQuery = @"SELECT * FROM goals WHERE id = @goalId";
         using var conn = Database.Database.GetConn();
 
-        int assignedUser = conn.ExecuteScalar<int>(checkQuery, new { userId });
+        int assignedUser = conn.ExecuteScalar<int>(checkQuery, new { goalId });
         if (assignedUser != userId) return null; // If current owner of goal is not assignee
 
         var updated = conn.Execute(updateQuery, new { userId, goalId });
@@ -103,12 +103,10 @@ public static class GoalDataAccess
 
     public static bool? CheckIfCompleted(int goalId)
     {
-        string selectQuery = @"SELECT * FROM goals WHERE id = @goalId";
+        string selectQuery = @"SELECT completed FROM goals WHERE id = @goalId";
         using var conn = Database.Database.GetConn();
-
-        Goal? goal = conn.QueryFirstOrDefault<Goal>(selectQuery, new { goalId });
-        if (goal == null) return null;
-        if (goal.Progress < goal.Cost) return false;
-        return true;
+        
+        bool? completed = conn.QueryFirstOrDefault<bool?>(selectQuery, new { goalId });
+        return completed;
     }
 }
