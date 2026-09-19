@@ -17,7 +17,7 @@ public class TaskController : ControllerBase
         var user = UserDataAccess.GetUser(userId);
         if (taskDto.UserId == 0) taskDto.UserId = null;
 
-        if (user.FamilyId == null) return Unauthorized("You are not in a family");
+        if (user.FamilyId == 0) return Unauthorized("You are not in a family");
         if (!user.IsAdult) return Unauthorized("A non adult can not make a task");
         
         if (taskDto.UserId != null)
@@ -83,10 +83,16 @@ public class TaskController : ControllerBase
     public ActionResult<Models.Task> MarkTaskAsCompleted(int id)
     {
         var task = TaskDataAccess.GetTask(id);
+        
         if (task == null) return NotFound("Could not find the task");
         if (task.Completed) return Conflict("Task is already completed");
         if (task.UserId == null) return Conflict("No user is assigned to the task ");
         
+        var user = UserDataAccess.GetUser(task.UserId.Value);
+        
+        if (user == null)  return NotFound("Could not find the user");
+        if (user.FamilyId == null) return Unauthorized("User is not in a family");
+
         var taskUpdated = TaskDataAccess.UpdateCompletedStatus(
             id, task.Reward, true, (int)task.UserId, task.GoalId);
         if (!taskUpdated) return Problem();
