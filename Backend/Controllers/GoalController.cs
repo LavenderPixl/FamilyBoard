@@ -58,14 +58,16 @@ public class GoalController : ControllerBase
 
     [HttpGet]
     [Authorize]
-    public ActionResult<Goal> GetGoal(int goalId)
+    public ActionResult<Goal> GetGoal(int goalId) // Get one specific goal
     {
         Goal? goal = GoalDataAccess.GetGoal(goalId);
         if (goal == null) return BadRequest("Could not find goal with this id");
         return Ok(goal);
     }
 
-    public ActionResult<List<Goal>> GetGoals(int userId)
+    [HttpGet("get-goals")]
+    [Authorize]
+    public ActionResult<List<Goal>> GetGoals(int userId) // Get all goals for user
     {
         User? user = UserDataAccess.GetUser(userId);
         if (user == null) return BadRequest("Could not find a user, with this id.");
@@ -73,7 +75,6 @@ public class GoalController : ControllerBase
         if (goals == null) return Ok("User has no goals associated yet.");
         return Ok(goals);
     }
-    // Get all goals for user
 
     [HttpPatch("assign-goal")]
     [Authorize]
