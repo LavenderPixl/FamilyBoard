@@ -7,5 +7,11 @@ export default {
 
   createFamily(familyName: string) {
     return HTTP.post('/family/create-family?familyName=' + familyName)
+  },
+
+  async getFamilyName(): Promise<string> {
+    const response = await HTTP.get('/family/get-family-name')
+
+    return response.data
   }
 }
