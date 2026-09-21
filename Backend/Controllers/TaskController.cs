@@ -78,6 +78,21 @@ public class TaskController : ControllerBase
         return Ok(updatedTask);
     }
 
+    [HttpPatch("claim-task")]
+    [Authorize]
+    public ActionResult<Models.Task> ClaimTask(int taskId)
+    {
+        var userId = Convert.ToInt32(User.FindFirstValue(ClaimTypes.NameIdentifier));
+        
+        var taskToClaim = TaskDataAccess.GetTask(taskId);
+        if (taskToClaim == null) return NotFound("Could not find the task");
+        if (taskToClaim.UserId != null) return Conflict("Can not claim a task already claimed");
+        
+        var claimedTask = TaskDataAccess.UpdateTask(taskId, taskToClaim.Name, taskToClaim.Reward, userId);
+        if (claimedTask == null) return Problem();
+        return claimedTask;
+    }
+
     [HttpPatch("mark-task-as-completed")]
     [Authorize]
     public ActionResult<Models.Task> MarkTaskAsCompleted(int id)
