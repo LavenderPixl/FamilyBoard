@@ -53,12 +53,17 @@ router.beforeEach(async (to) => {
   if (to.meta.requiresAuth && !auth.isLoggedIn) {
     return { name: 'login' }
   }
-  if (auth.isLoggedIn && !user.user) {
-    try {
-      await user.getUser()
-    } catch {
-      auth.logout()
-      return { name: 'login' }
+  if (auth.isLoggedIn) {
+    if (user.user) {
+      auth.startRefTimer()
+
+    } else {
+      try {
+        await user.getUser()
+      } catch {
+        auth.logout()
+        return { name: 'login' }
+      }
     }
   }
 })
