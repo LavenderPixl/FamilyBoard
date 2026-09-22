@@ -17,6 +17,30 @@ const router = createRouter({
       component: () => import('../views/HomeView.vue'),
     },
     {
+      path: '/administrer-pligter',
+      name: 'chore-administration',
+      meta: {
+        requiresAuth: true,
+      },
+      component: () => import('../views/ChoreView.vue'),
+    },
+    {
+      path: '/familieindstillinger',
+      name: 'family-administration',
+      meta: {
+        requiresAuth: true,
+      },
+      component: () => import('../views/FamilyView.vue'),
+    },
+    {
+      path: '/kontoindstillinger',
+      name: 'user-administration',
+      meta: {
+        requiresAuth: true,
+      },
+      component: () => import('../views/UserSettings.vue'),
+    },
+    {
       path:'/login',
       name: 'login',
       meta: {
@@ -25,7 +49,7 @@ const router = createRouter({
       component: LoginView
 
     },{
-      path:'/signup',
+      path:'/opret-bruger',
       name: 'signup',
       meta: {
         hideNavbar: true,

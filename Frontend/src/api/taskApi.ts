@@ -32,5 +32,11 @@ export default {
     const response = await HTTP.patch<ITask>('/task/claim-task?taskId=' + task.id)
 
     return response.data
-  }
+  },
+
+  async deleteTask(task: ITask): Promise<ITask> {
+    const response = await HTTP.delete<ITask>('/task?id=' + task.id)
+
+    return response.data
+  },
 }

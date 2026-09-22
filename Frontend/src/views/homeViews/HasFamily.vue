@@ -69,11 +69,11 @@ onMounted(async () => {
 
 <template>
   <div class="container h-full" id="main-container">
-    <h1 class="text-center">{{ familyName }}</h1>
+    <h1 class="title text-center py-3">{{ familyName }}</h1>
     <div class="row justify-content-center items-center" style="min-width: 93vw">
       <div class="col-2" id="scoreboard">
         <h2>Rank liste</h2>
-        <table class="table table-dark table-striped-columns">
+        <table class="table table-dark table-striped table-bordered">
           <thead>
             <tr>
               <th scope="col">#</th>
@@ -103,7 +103,7 @@ onMounted(async () => {
       </div>
       <div class="col-6" id="user-tasks">
         <h2>Dine pligter</h2>
-        <table class="table table-dark table-striped-columns">
+        <table class="table table-dark table-striped table-bordered">
           <thead>
             <tr>
               <th>Opgave</th>
@@ -137,7 +137,7 @@ onMounted(async () => {
       </div>
       <div class="col-3" id="open-tasks">
         <h2>åbne pligter</h2>
-        <table class="table table-dark table-striped-columns">
+        <table class="table table-dark table-striped table-bordered">
           <thead>
             <tr>
               <th>Opgave</th>
@@ -169,7 +169,6 @@ onMounted(async () => {
 .container {
   min-height: 87vh;
   min-width: 93vw;
-  background-color: grey;
   margin: 0;
 }
 
