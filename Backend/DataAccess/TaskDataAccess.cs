@@ -24,7 +24,8 @@ public class TaskDataAccess
 
     public static Models.Task? GetTask(int id)
     {
-        string selectQuery = @"SELECT tasks.id, name, reward, completed, expire_date, tasks.family_id, user_id, username FROM tasks 
+        string selectQuery = @"SELECT tasks.id, name, reward, completed, expire_date, tasks.family_id, user_id, username, goal_id
+                                    FROM tasks 
                                     LEFT JOIN users u on tasks.user_id = u.id
                                     WHERE tasks.id = @id";
         using var conn = Database.Database.GetConn();
@@ -35,7 +36,8 @@ public class TaskDataAccess
 
     public static List<Models.Task> GetTasksForFamily(int familyId)
     {
-        string selectQuery = @"SELECT tasks.id, name, reward, completed, expire_date, tasks.family_id, user_id, username FROM tasks
+        string selectQuery = @"SELECT tasks.id, name, reward, completed, expire_date, tasks.family_id, user_id, username, goal_id 
+                                    FROM tasks
                                     LEFT JOIN public.users u on tasks.user_id = u.id
                                     WHERE tasks.family_id = @familyId";
         using var conn = Database.Database.GetConn();
@@ -46,7 +48,8 @@ public class TaskDataAccess
     
     public static List<Models.Task> GetTasksForUser(int userId)
     {
-        string selectQuery = @"SELECT tasks.id, name, reward, completed, expire_date, tasks.family_id, user_id, username FROM tasks
+        string selectQuery = @"SELECT tasks.id, name, reward, completed, expire_date, tasks.family_id, user_id, username, goal_id
+                                    FROM tasks
                                     LEFT JOIN public.users u on tasks.user_id = u.id
                                     WHERE tasks.user_id = @userId";
         using var conn = Database.Database.GetConn();
@@ -82,15 +85,13 @@ public class TaskDataAccess
             {
                 conn.Execute(updateUserQuery, new { reward, userId });
                 conn.Execute(updateTaskQuery, new { id, completed, goalId });
-                if (goalId != null)
-                {
-                    conn.Execute(updateGoalQuery, new { reward, userId });
-                }
+                conn.Execute(updateGoalQuery, new { reward, goalId });
                 tran.Commit();
                 return true;
             }
-            catch
+            catch (Exception e)
             {
+                Console.WriteLine(e);
                 tran.Rollback();
                 return false;
             }
