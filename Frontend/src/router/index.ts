@@ -68,10 +68,10 @@ router.beforeEach(async (to) => {
   }
 })
 
-router.afterEach((to) => {
-  const auth = authStore()
-  if (auth.isLoggedIn) {
-    userStore().getUser()
-  }
-})
+// router.afterEach((to) => {
+//   const auth = authStore()
+//   if (auth.isLoggedIn) {
+//     userStore().getUser()
+//   }
+// })
 export default router
