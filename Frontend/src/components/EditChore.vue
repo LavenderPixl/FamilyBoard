@@ -17,7 +17,7 @@
   const name = ref(props.task?.name ?? '');
   const reward = ref(props.task?.reward ?? 0);
   const userId = ref<number | null>(props.task?.userId ?? null) //
-  const expireDate = ref(props.task?.expireDate ?? '')
+  const expireDate = ref(props.task?.expireDate ?? new Date().toISOString().slice(0, 10));
 
   function submit() {
     emit('save', {
