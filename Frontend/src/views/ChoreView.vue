@@ -1,19 +1,47 @@
 <script setup lang="ts">
 import {onMounted, ref} from "vue";
 import taskApi from "@/api/taskApi.ts";
+import familyApi from "@/api/familyApi.ts";
 import type {ITask} from "@/models/task.ts";
+import type {IUser} from "@/models/user.ts";
+import EditChore from "@/components/EditChore.vue";
 
-const family = ref();
 const tasks = ref<ITask[]>([]);
+const familyMembers = ref<IUser[]>([]);
+
+const formOpen = ref(false);
+const editingTask = ref<ITask | null>(null);
+
+function openCreate() {
+  editingTask.value = null;
+  formOpen.value = true;
+}
+function openEdit(task: ITask) {
+  editingTask.value = task;
+  formOpen.value = true;
+}
+function closeForm() {
+  formOpen.value = false;
+}
 
 async function deleteTask(task: ITask) {
   await taskApi.deleteTask(task)
   tasks.value = await taskApi.getTasksForFamily();
+}
 
+async function saveTask(payload: {id?: number; name: string; reward: number; expireDate: string; userId: number | null}) {
+  if (payload.id) { // If editing (task exists).
+    await taskApi.updateTask(payload.id, payload.name, payload.reward, payload.expireDate, payload.userId);
+  } else {
+    await taskApi.createTask(payload.name, payload.reward, payload.expireDate, payload.userId);
+  }
+  tasks.value = await taskApi.getTasksForFamily()
+  closeForm()
 }
 
 onMounted(async () => {
   tasks.value = await taskApi.getTasksForFamily();
+  familyMembers.value = await familyApi.getFamilyMembers();
 })
 </script>
 
@@ -21,13 +49,11 @@ onMounted(async () => {
   <div class="container ">
     <h1 class="title text-center py-3">Administrer pligter</h1>
     <div>
-
-    <h2></h2>
     <table class="table table-dark table-striped table-bordered">
       <thead>
       <tr>
         <th colspan="4" class="h2">Nuværende pligter</th>
-        <th><button><i class="bi bi-plus-lg"></i></button></th>
+        <th><button @click="openCreate"><i class="bi bi-plus-lg"></i></button></th>
       </tr>
       </thead>
       <thead>
@@ -44,12 +70,21 @@ onMounted(async () => {
         <td>{{ task.name }}</td>
         <td>{{ task.reward}}</td>
         <td>{{ task.username }}</td>
-        <td><button><i class="bi bi-pencil-square"></i></button></td>
+        <td><button @click="openEdit(task)"><i class="bi bi-pencil-square"></i></button></td>
         <td><button @click="deleteTask(task)"><i class="bi bi-x-lg"></i></button></td>
       </tr>
       </tbody>
     </table>
     </div>
+    <EditChore
+        v-if="formOpen"
+        :key="editingTask?.id ?? 'new'"
+        :task="editingTask"
+        :family-members="familyMembers"
+        @close="closeForm"
+        @save="saveTask"
+    ></EditChore>
+
 
   </div>
 </template>
@@ -59,6 +94,10 @@ onMounted(async () => {
   min-height: 87vh;
   min-width: 93vw;
   margin: 0;
+}
+
+label {
+  color: var(--color-text)
 }
 
 </style>
