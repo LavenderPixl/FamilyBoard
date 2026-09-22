@@ -4,17 +4,18 @@ namespace Backend.DataAccess;
 
 public class TaskDataAccess
 {
-    public static Models.Task? CreateTask(string name, int reward, int familyId, int? userId)
+    public static Models.Task? CreateTask(string name, int reward, DateOnly expireDate, int familyId, int? userId)
     {
-        string insertQuery = @"INSERT INTO tasks (name, reward, family_id, user_id) 
-                                    VALUES (@name, @reward, @familyId, @userId)
+        var expireAsDateTime = expireDate.ToDateTime(TimeOnly.MinValue);
+        string insertQuery = @"INSERT INTO tasks (name, reward, expire_date, family_id, user_id) 
+                                    VALUES (@name, @reward, @expireDate, @familyId, @userId)
                                     RETURNING id";
-        string selectQuery = @"SELECT tasks.id, name, reward, completed, tasks.family_id, user_id, username FROM tasks 
+        string selectQuery = @"SELECT tasks.id, name, reward, expire_date, completed, tasks.family_id, user_id, username FROM tasks 
                                     LEFT JOIN users u on tasks.user_id = u.id
                                     WHERE tasks.id = @id";
         using var conn = Database.Database.GetConn();
 
-        int? taskId = conn.QueryFirstOrDefault<int>(insertQuery, new { name, reward, familyId, userId });
+        int? taskId = conn.QueryFirstOrDefault<int>(insertQuery, new { name, reward, expireDate = expireAsDateTime, familyId, userId });
         if (taskId == null) return null;
 
         Models.Task? task = conn.QueryFirstOrDefault<Models.Task>(selectQuery, new { id = taskId });
@@ -23,7 +24,7 @@ public class TaskDataAccess
 
     public static Models.Task? GetTask(int id)
     {
-        string selectQuery = @"SELECT tasks.id, name, reward, completed, tasks.family_id, user_id, username FROM tasks 
+        string selectQuery = @"SELECT tasks.id, name, reward, completed, expire_date, tasks.family_id, user_id, username FROM tasks 
                                     LEFT JOIN users u on tasks.user_id = u.id
                                     WHERE tasks.id = @id";
         using var conn = Database.Database.GetConn();
@@ -34,7 +35,7 @@ public class TaskDataAccess
 
     public static List<Models.Task> GetTasksForFamily(int familyId)
     {
-        string selectQuery = @"SELECT tasks.id, name, reward, completed, tasks.family_id, user_id, username FROM tasks
+        string selectQuery = @"SELECT tasks.id, name, reward, completed, expire_date, tasks.family_id, user_id, username FROM tasks
                                     LEFT JOIN public.users u on tasks.user_id = u.id
                                     WHERE tasks.family_id = @familyId";
         using var conn = Database.Database.GetConn();
@@ -45,7 +46,7 @@ public class TaskDataAccess
     
     public static List<Models.Task> GetTasksForUser(int userId)
     {
-        string selectQuery = @"SELECT tasks.id, name, reward, completed, tasks.family_id, user_id, username FROM tasks
+        string selectQuery = @"SELECT tasks.id, name, reward, completed, expire_date, tasks.family_id, user_id, username FROM tasks
                                     LEFT JOIN public.users u on tasks.user_id = u.id
                                     WHERE tasks.user_id = @userId";
         using var conn = Database.Database.GetConn();
@@ -54,15 +55,16 @@ public class TaskDataAccess
         return tasks;
     }
 
-    public static Models.Task? UpdateTask(int id, string name, int reward, int? userId)
+    public static Models.Task? UpdateTask(int id, string name, int reward, DateOnly expireDate, int? userId)
     {
-        string updateQuery = @"UPDATE tasks SET name = @name, reward = @reward, user_id = @userId WHERE id = @id";
-        string selectQuery = @"SELECT tasks.id, name, reward, completed, tasks.family_id, user_id, username FROM tasks 
+        var expireAsDateTime = expireDate.ToDateTime(TimeOnly.MinValue);
+        string updateQuery = @"UPDATE tasks SET name = @name, reward = @reward, expire_date = @expireDate, user_id = @userId WHERE id = @id";
+        string selectQuery = @"SELECT tasks.id, name, reward, completed, expire_date, tasks.family_id, user_id, username FROM tasks 
                                     LEFT JOIN users u on tasks.user_id = u.id
                                     WHERE tasks.id = @id";
         using var conn = Database.Database.GetConn();
 
-        conn.Execute(updateQuery, new {id, name, reward, userId});
+        conn.Execute(updateQuery, new {id, name, reward, expireDate = expireAsDateTime, userId});
         var updatedTask = conn.QueryFirstOrDefault<Models.Task>(selectQuery, new {id});
         return updatedTask;
     }
