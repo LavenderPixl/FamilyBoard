@@ -24,9 +24,13 @@ function closeForm() {
   formOpen.value = false;
 }
 
+async function loadTasks() {
+  tasks.value = (await taskApi.getTasksForFamily()).sort((a, b) => a.expireDate.localeCompare(b.expireDate))
+}
+
 async function deleteTask(task: ITask) {
   await taskApi.deleteTask(task)
-  tasks.value = await taskApi.getTasksForFamily();
+  await loadTasks();
 }
 
 async function saveTask(payload: {id?: number; name: string; reward: number; expireDate: string; userId: number | null}) {
@@ -35,12 +39,12 @@ async function saveTask(payload: {id?: number; name: string; reward: number; exp
   } else {
     await taskApi.createTask(payload.name, payload.reward, payload.expireDate, payload.userId);
   }
-  tasks.value = await taskApi.getTasksForFamily()
+  await loadTasks();
   closeForm()
 }
 
 onMounted(async () => {
-  tasks.value = await taskApi.getTasksForFamily();
+  await loadTasks();
   familyMembers.value = await familyApi.getFamilyMembers();
 })
 </script>
