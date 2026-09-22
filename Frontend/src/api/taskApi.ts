@@ -47,7 +47,7 @@ export default {
 
   async updateTask
   (taskId: number, name: string, reward: number, expireDate: string, userId: number | null): Promise<ITask> {
-    const response = await HTTP.patch<ITask>('/task?id=' + taskId, {
+    const response = await HTTP.patch<ITask>('/task?taskId=' + taskId, {
       name: name, reward: reward, expireDate: expireDate, userId: userId})
     return response.data
   },
