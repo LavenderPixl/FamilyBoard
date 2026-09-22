@@ -33,33 +33,39 @@
 <template>
   <div class="backdrop" @click.self="emit('close')">
     <div class="content">
-      <h2> {{ editing ? 'Rediger pligt' : 'Opret ny pligt'}}</h2>
-      <form @submit.prevent="submit">
+      <div class="header">
+        <h2> {{ editing ? 'Rediger pligt' : 'Opret ny pligt'}}</h2>
+      </div>
 
-        <label> Pligt
-          <input type="text" v-model="name" required>
-        </label>
+      <form class="body" @submit.prevent="submit">
+        <div class="field-row">
+          <label for="name">Pligt</label>
+          <input id="name" type="text" v-model="name" required class="field">
+        </div>
 
-        <label> Tildel
-          <select v-model="userId">
+        <div class="field-row">
+          <label for="userId">Tildel</label>
+          <select id="userId" v-model="userId" class="field">
             <option :value="null">Ingen</option>
             <option v-for="user in familyMembers" :key="user.id" :value="user.id">
               {{ user.username }}
             </option>
           </select>
-        </label>
+        </div>
 
-        <label> Sidste dato
-          <input type="date" v-model="expireDate">
-        </label>
+        <div class="field-row">
+          <label for="reward">Point</label>
+          <input id="reward" type="number" v-model.number="reward" class="field">
+        </div>
 
-        <label> Belønning
-          <input type="number" v-model.number="reward">
-        </label>
+        <div class="field-row">
+          <label for="expireDate">Sidste dato</label>
+          <input id="expireDate" type="date" v-model="expireDate" class="date-field">
+        </div>
 
-      <div class="d-flex justify-content-end gap-2">
-        <button type="button" @click="emit('close')">Luk</button>
-        <button type="submit">{{ editing ? 'Gem ændringer' : 'Opret ny pligt' }}</button>
+      <div class="actions">
+        <button type="button" class="action-btn" @click="emit('close')">Luk</button>
+        <button type="submit" class="action-btn">{{ editing ? 'Gem ændringer' : 'Opret ny pligt' }}</button>
       </div>
       </form>
     </div>
@@ -79,7 +85,45 @@
 
 .content {
   background-color: var(--color-background-mute);
-  padding: 2em;
-  min-width: 1em;
+  padding: 1.5em;
+  width: 25em;
 }
+
+.body{
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.30rem;
+}
+
+.field-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.7rem;
+}
+
+.field-row label {
+  color: var(--color-text);
+  flex-shrink: 0;
+}
+
+.field {
+  width: 13rem;
+  padding: 0.5rem;
+  border: none;
+}
+
+.actions {
+  display: flex;
+  gap: 0.8rem;
+  margin-top: 0.3rem;
+}
+
+.action-btn {
+  flex: 1;
+  padding: 0.3rem;
+  border: none;
+}
+
 </style>

@@ -46,14 +46,14 @@ onMounted(async () => {
 </script>
 
 <template>
-  <div class="container ">
+  <div class="container px-5">
     <h1 class="title text-center py-3">Administrer pligter</h1>
     <div>
     <table class="table table-dark table-striped table-bordered">
       <thead>
       <tr>
-        <th colspan="4" class="h2">Nuværende pligter</th>
-        <th><button @click="openCreate"><i class="bi bi-plus-lg"></i></button></th>
+        <th colspan="3" class="h2">Nuværende pligter</th>
+        <th colspan="2" class="h4"> Opret ny pligt <button @click="openCreate"><i class="bi bi-plus-lg"></i></button></th>
       </tr>
       </thead>
       <thead>
