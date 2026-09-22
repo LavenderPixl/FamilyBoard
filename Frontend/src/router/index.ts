@@ -1,9 +1,8 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import HomeView from '../views/HomeView.vue'
-import LoginView from "../views/LoginView.vue";
-import SignupView  from "../views/SignupView.vue";
-import { authStore } from "../stores/authStore.ts";
-import { userStore } from "../stores/userStore.ts";
+import LoginView from "@/views/LoginView.vue";
+import SignupView  from "@/views/SignupView.vue";
+import { authStore } from "@/stores/authStore.ts";
+import { userStore } from "@/stores/userStore.ts";
 
 const router = createRouter({
   linkActiveClass: 'border-indigo-500',

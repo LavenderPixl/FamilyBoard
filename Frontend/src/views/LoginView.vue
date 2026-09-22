@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import router from "@/router";
-import api from "../api/userApi.ts"
-import { authStore } from "../stores/authStore.ts"
-import { userStore } from "../stores/userStore.ts";
+import api from "@/api/userApi.ts"
+import { authStore } from "@/stores/authStore.ts"
+import { userStore } from "@/stores/userStore.ts";
 import { onMounted, ref } from "vue";
 import { useRoute } from "vue-router"
 

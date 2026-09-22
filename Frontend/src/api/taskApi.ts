@@ -1,5 +1,5 @@
 import { HTTP } from './client.ts'
-import type { ITask } from '../models/task.ts'
+import type { ITask } from '@/models/task.ts'
 
 export default {
   async getTasksForUser(userId: number): Promise<ITask[]> {
