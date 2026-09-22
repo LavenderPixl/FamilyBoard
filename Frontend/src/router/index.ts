@@ -53,20 +53,25 @@ router.beforeEach(async (to) => {
   if (to.meta.requiresAuth && !auth.isLoggedIn) {
     return { name: 'login' }
   }
-  if (auth.isLoggedIn && !user.user) {
-    try {
-      await user.getUser()
-    } catch {
-      auth.logout()
-      return { name: 'login' }
+  if (auth.isLoggedIn) {
+    if (user.user) {
+      auth.startRefTimer()
+
+    } else {
+      try {
+        await user.getUser()
+      } catch {
+        auth.logout()
+        return { name: 'login' }
+      }
     }
   }
 })
 
-router.afterEach((to) => {
-  const auth = authStore()
-  if (auth.isLoggedIn) {
-    userStore().getUser()
-  }
-})
+// router.afterEach((to) => {
+//   const auth = authStore()
+//   if (auth.isLoggedIn) {
+//     userStore().getUser()
+//   }
+// })
 export default router

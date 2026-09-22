@@ -47,6 +47,7 @@ CREATE TABLE tasks(
     name VARCHAR(128) NOT NULL,
     reward INT NOT NULL,
     completed BOOLEAN NOT NULL DEFAULT FALSE,
+    expire_date DATE NOT NULL,
     family_id INT NOT NULL,
     user_id INT,
     goal_id INT,

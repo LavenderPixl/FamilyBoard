@@ -24,7 +24,7 @@ public class TaskController : ControllerBase
             if (!UserDataAccess.CheckIfUserExist((int)taskDto.UserId))
                 return Conflict("The assigned user does not exist");
 
-        var task = TaskDataAccess.CreateTask(taskDto.Name, taskDto.Reward, user.FamilyId, taskDto.UserId);
+        var task = TaskDataAccess.CreateTask(taskDto.Name, taskDto.Reward, taskDto.ExpireDate, user.FamilyId, taskDto.UserId);
         if (task == null) return Problem();
 
         return Ok(task);
@@ -72,7 +72,7 @@ public class TaskController : ControllerBase
         var user = UserDataAccess.GetUser(userId);
         if (!user.IsAdult) return Unauthorized("A non adult can not update a task");
 
-        var updatedTask = TaskDataAccess.UpdateTask(taskId, taskDto.Name, taskDto.Reward, taskDto.UserId);
+        var updatedTask = TaskDataAccess.UpdateTask(taskId, taskDto.Name, taskDto.Reward, taskDto.ExpireDate, taskDto.UserId);
         if (updatedTask == null) return Problem();
 
         return Ok(updatedTask);
@@ -88,7 +88,7 @@ public class TaskController : ControllerBase
         if (taskToClaim == null) return NotFound("Could not find the task");
         if (taskToClaim.UserId != null) return Conflict("Can not claim a task already claimed");
         
-        var claimedTask = TaskDataAccess.UpdateTask(taskId, taskToClaim.Name, taskToClaim.Reward, userId);
+        var claimedTask = TaskDataAccess.UpdateTask(taskId, taskToClaim.Name, taskToClaim.Reward, taskToClaim.ExpireDate, userId);
         if (claimedTask == null) return Problem();
         return claimedTask;
     }
@@ -153,6 +153,8 @@ public class TaskController : ControllerBase
     {
         public string Name { get; set; }
         public int Reward { get; set; }
+        
+        public DateOnly ExpireDate { get; set; }
         public int? UserId { get; set; }
     }
 }
