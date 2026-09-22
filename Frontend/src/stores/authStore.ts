@@ -1,6 +1,6 @@
 import { defineStore } from "pinia";
 import router from "@/router";
-import api from "../api.ts";
+import api from "../api/userApi.ts";
 import { userStore } from "./userStore.ts";
 import { jwtDecode } from "jwt-decode";
 

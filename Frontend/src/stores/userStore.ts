@@ -1,6 +1,6 @@
 import {defineStore} from "pinia";
 import type { IUser } from "../models/user.ts"
-import api from "../api.ts"
+import api from "../api/userApi.ts"
 
 export const userStore = defineStore("user", {
     state: () => ({

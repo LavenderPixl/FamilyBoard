@@ -1,7 +1,6 @@
 @import './base.css';
 
 #app {
-  max-width: 1280px;
   margin: 0 auto;
   padding: 2rem;
   font-weight: normal;
@@ -12,7 +11,7 @@
   color: var(--color-text-hover);
 }
 
-h1 {
+h1, h2, h3, h4, h5, h6 {
   color: var(--color-text);
 }
 p {
