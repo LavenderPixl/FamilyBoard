@@ -52,7 +52,7 @@ onMounted(async () => {
     <table class="table table-dark table-striped table-bordered">
       <thead>
       <tr>
-        <th colspan="3" class="h2">Nuværende pligter</th>
+        <th colspan="4" class="h2">Nuværende pligter</th>
         <th colspan="2" class="h4"> Opret ny pligt <button @click="openCreate"><i class="bi bi-plus-lg"></i></button></th>
       </tr>
       </thead>
@@ -60,7 +60,8 @@ onMounted(async () => {
         <tr class="thead">
           <th>Pligt</th>
           <th style="width: 15%">Point</th>
-          <th style="width: 25%">Tildelt</th>
+          <th style="width: 20%">Tildelt</th>
+          <th style="width: 15%">Sidste dato</th>
           <th style="width: 10%">Rediger</th>
           <th style="width: 10%">Slet</th>
         </tr>
@@ -70,6 +71,7 @@ onMounted(async () => {
         <td>{{ task.name }}</td>
         <td>{{ task.reward}}</td>
         <td>{{ task.username }}</td>
+        <td>{{ task.expireDate }}</td>
         <td><button @click="openEdit(task)"><i class="bi bi-pencil-square"></i></button></td>
         <td><button @click="deleteTask(task)"><i class="bi bi-x-lg"></i></button></td>
       </tr>
