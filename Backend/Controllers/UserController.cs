@@ -13,6 +13,8 @@ public class UserController : ControllerBase
     [HttpPost("create-user")]
     public IActionResult CreateUser(NewUser newUser)
     {
+        // remove capitalization from user email
+        newUser.Email = newUser.Email.ToLower();
         if (!UserDataAccess.CreateUser(newUser.Email, newUser.Username, newUser.Password))
             return Conflict();
             
