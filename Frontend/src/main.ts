@@ -10,15 +10,11 @@ import 'bootstrap-icons/font/bootstrap-icons.css'
 import App from './App.vue'
 import router from './router'
 import { authStore } from "./stores/authStore.ts";
-import { userStore} from '@/stores/userStore.ts'
 
 const app = createApp(App)
 
 app.use(createPinia())
 app.use(router)
-
-// const user = userStore()
-// user.getUser();
 
 // Starts refresh timer for JWT token on startup (or refresh).
 const auth = authStore()

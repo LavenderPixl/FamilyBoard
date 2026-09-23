@@ -1,17 +1,23 @@
 <script setup lang="ts">
 import { computed, onMounted, ref } from 'vue'
-import type { ITask } from '@/models/task.ts'
-import taskApi from '@/api/taskApi.ts'
 import { userStore } from '@/stores/userStore.ts'
 import familyApi from '@/api/familyApi.ts'
-import type { IGoal } from '@/models/goal.ts'
 import goalApi from '@/api/goalApi.ts'
+import taskApi from '@/api/taskApi.ts'
+import type { ITask } from '@/models/task.ts'
+import type { IGoal } from '@/models/goal.ts'
+import type { IUser } from "@/models/user.ts";
 
 const familyName = ref('')
 const goal = ref<IGoal>()
 const tasks = ref<ITask[]>([])
 const openTasks = ref<ITask[]>([])
 const isUserAdult = ref(false)
+const familyMembers = ref<IUser[]>([])
+
+const sortedFamilyMembers = computed(() => { // Returns new list
+  return [...familyMembers.value].sort((a,b) => b.points - a.points)
+})
 
 const goalPercentage = computed(() => {
   if (goal.value) {
@@ -21,6 +27,10 @@ const goalPercentage = computed(() => {
   return 0
 })
 
+async function refreshFamilyMembers(){
+  familyMembers.value = await familyApi.getFamilyMembers()
+}
+
 async function markTaskAsCompleted(task: ITask) {
   const updatedTask = await taskApi.markTaskAsCompleted(task)
 
@@ -29,6 +39,7 @@ async function markTaskAsCompleted(task: ITask) {
     tasks.value[index] = updatedTask
     sortTasks()
     await refreshGoal()
+    await refreshFamilyMembers()
   }
 }
 
@@ -40,6 +51,7 @@ async function unMarkTaskAsCompleted(task: ITask) {
     tasks.value[index] = updatedTask
     sortTasks()
     await refreshGoal()
+    await refreshFamilyMembers()
   }
 }
 
@@ -93,8 +105,8 @@ onMounted(async () => {
     tasks.value = await taskApi.getTasksForUser(userFromUserStore.id)
   }
   sortTasks()
-
   familyName.value = await familyApi.getFamilyName()
+  familyMembers.value = await familyApi.getFamilyMembers()
 
   await getOpenTasks()
   await refreshGoal()
@@ -103,10 +115,10 @@ onMounted(async () => {
 
 <template>
   <div class="container h-full" id="main-container">
-    <h1 class="text-center">Familien {{ familyName }}</h1>
+    <h1 class="title text-center">Familien {{ familyName }}</h1>
     <div class="row justify-content-center items-center" id="goal-progress">
       <div v-if="!goal">
-        <h1>Du har ikke et aktivt mål</h1>
+        <h2>Du har ikke et aktivt mål</h2>
       </div>
       <div v-if="goal">
         <h2 class="text-center">Mål: {{ goal.name }}</h2>
@@ -138,20 +150,10 @@ onMounted(async () => {
             </thead>
 
             <tbody>
-              <tr>
-                <td>1</td>
-                <td>Søren</td>
-                <td>1230</td>
-              </tr>
-              <tr>
-                <td>2</td>
-                <td>sofie</td>
-                <td>1050</td>
-              </tr>
-              <tr>
-                <td>3</td>
-                <td>sigurd</td>
-                <td>525</td>
+              <tr v-for="(member, index) in sortedFamilyMembers" :key="member.id">
+                <td>{{ index + 1}}</td>
+                <td>{{ member.username}}</td>
+                <td>{{ member.points }}</td>
               </tr>
             </tbody>
           </table>
@@ -167,7 +169,7 @@ onMounted(async () => {
                 <th>Points</th>
                 <th>Udført</th>
                 <th>Frist</th>
-                <th>Opdater</th>
+                <th width="25%">Opdater</th>
               </tr>
             </thead>
 
@@ -209,7 +211,7 @@ onMounted(async () => {
             <thead>
               <tr>
                 <th>Opgave</th>
-                <th>belønning</th>
+                <th>Points</th>
                 <th>Tag pligten</th>
               </tr>
             </thead>

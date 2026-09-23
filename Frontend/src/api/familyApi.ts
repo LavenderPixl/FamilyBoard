@@ -6,6 +6,14 @@ export default {
     return HTTP.patch('/family/join-family?inviteCode=' + familyCode)
   },
 
+  leaveFamily(familyId: number) {
+    return HTTP.patch('/family/leave-family?familyId='+ familyId)
+  },
+
+  kickFamilyMember(familyId: number, userId: number) {
+    return HTTP.patch('/family/kick-family-member?familyId='+familyId+'&userId='+userId)
+  },
+
   createFamily(familyName: string) {
     return HTTP.post('/family/create-family?familyName=' + familyName)
   },
@@ -18,6 +26,11 @@ export default {
 
   async getFamilyMembers(): Promise<IUser[]> {
     const response = await HTTP.get<IUser[]>('/family/get-family-members')
+    return response.data
+  },
+
+  async createFamilyInvite(): Promise<string> {
+    const response = await HTTP.post('/family/generate-invite')
     return response.data
   }
 }

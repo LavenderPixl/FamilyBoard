@@ -76,6 +76,19 @@ public class FamilyController : ControllerBase
         
         return Ok();
     }
+
+    [HttpPatch("kick-family-member")]
+        [Authorize]
+        public IActionResult LeaveFamily(int familyId, int userId)
+        {
+            var user = UserDataAccess.GetUser(userId);
+            if (user == null) return Problem();
+
+            var attemptLeave = FamilyDataAccess.LeaveFamily(userId, familyId);
+            if (!attemptLeave) return Problem();
+
+            return Ok();
+        }
     
     
     [HttpGet("get-family-members")]
