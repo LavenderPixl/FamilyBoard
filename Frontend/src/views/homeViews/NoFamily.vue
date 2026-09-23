@@ -12,7 +12,8 @@ function JoinFamily() {
     incorrectFamilyCode.value = true
     return
   }
-  familyApi.joinFamily(joinFamilyCode.value)
+  familyApi
+    .joinFamily(joinFamilyCode.value)
     .then(() => {
       window.location.reload()
     })
@@ -26,23 +27,19 @@ function JoinFamily() {
 }
 
 function CreateFamily() {
-  familyApi.createFamily(newFamilyName.value)
-      .then(() => {
-        window.location.reload()
-      })
-      .catch((err) => {
-        if (err.response?.status === 400) {
-          incorrectFamilyName.value = true
-        } else {
-          console.error(err)
-        }
-      })
+  familyApi
+    .createFamily(newFamilyName.value)
+    .then(() => {
+      window.location.reload()
+    })
+    .catch((err) => {
+      if (err.response?.status === 400) {
+        incorrectFamilyName.value = true
+      } else {
+        console.error(err)
+      }
+    })
 }
-
-// async function CreateFamily() {
-//   await familyApi.createFamily(newFamilyName.value)
-//   window.location.reload()
-// }
 </script>
 
 <template>
@@ -72,23 +69,23 @@ function CreateFamily() {
             <span aria-hidden="true">&times;</span>
           </button>
         </div>
-        <div class="modal-body">
-          <h3 class="h5">Familie navn</h3>
-          <p v-if="incorrectFamilyName" class="alert-danger mt-3">
-            Dette navn kan ikke bruges til en familie
-          </p>
-          <input
-            v-model="newFamilyName"
-            type="text"
-            class="form-control"
-            placeholder="Familie navn"
-          />
-        </div>
-        <div class="modal-footer">
-          <button v-on:click="CreateFamily()" type="button" class="btn, btn-primary">
-            Opret familie
-          </button>
-        </div>
+        <form @submit.prevent="CreateFamily()">
+          <div class="modal-body">
+            <h3 class="h5">Familie navn</h3>
+            <p v-if="incorrectFamilyName" class="alert-danger mt-3">
+              Dette navn kan ikke bruges til en familie
+            </p>
+            <input
+              v-model="newFamilyName"
+              type="text"
+              class="form-control"
+              placeholder="Familie navn"
+            />
+          </div>
+          <div class="modal-footer">
+            <button type="submit" class="btn, btn-primary">Opret familie</button>
+          </div>
+        </form>
       </div>
     </div>
   </div>
@@ -103,23 +100,25 @@ function CreateFamily() {
             <span aria-hidden="true">&times;</span>
           </button>
         </div>
-        <div class="modal-body">
-          <h3 class="h5">Indtast den kode du har fået for at deltage familien</h3>
-          <p v-if="incorrectFamilyCode" class="alert-danger mt-3">
-            Denne Kode passer ikke med nogen familier
-          </p>
-          <input
-            v-model="joinFamilyCode"
-            type="text"
-            class="form-control"
-            placeholder="familie kode"
-          />
-        </div>
-        <div class="modal-footer">
-          <button v-on:click="JoinFamily()" type="button" class="btn, btn-primary">
-            Deltag i familie
-          </button>
-        </div>
+        <form @submit.prevent="JoinFamily()">
+          <div class="modal-body">
+            <h3 class="h5">Indtast den kode du har fået for at deltage familien</h3>
+            <p v-if="incorrectFamilyCode" class="alert-danger mt-3">
+              Denne Kode passer ikke med nogen familier
+            </p>
+            <input
+              v-model="joinFamilyCode"
+              type="text"
+              class="form-control"
+              placeholder="familie kode"
+            />
+          </div>
+          <div class="modal-footer">
+            <button type="submit" class="btn, btn-primary">
+              Deltag i familie
+            </button>
+          </div>
+        </form>
       </div>
     </div>
   </div>
