@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref } from "vue";
-import api from "@/api.ts";
+import api from "@/api/userApi.ts";
 import router from "@/router";
 
 const email = ref('');

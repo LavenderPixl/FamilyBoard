@@ -1,14 +1,31 @@
 <script setup lang="ts">
-import router from "@/router";
-import { authStore } from "../stores/authStore.ts";
-import { userStore } from "../stores/userStore.ts";
+import router from '@/router'
+import { authStore } from '../stores/authStore.ts'
+import { userStore } from '../stores/userStore.ts'
+import { onMounted, ref } from 'vue'
 
-const auth = authStore();
-const user = userStore();
+const auth = authStore()
+const user = userStore()
+const isInFamily = ref(false)
 
 function logout() {
   auth.logout()
 }
+
+async function isUserInFamily() {
+  await user.getUser()
+
+  if (user.user !== null) {
+    if (user.user.familyId !== 0) {
+      return true
+    }
+  }
+  return false
+}
+
+onMounted(async () =>{
+  isInFamily.value = await isUserInFamily()
+})
 </script>
 
 <template>
@@ -16,8 +33,8 @@ function logout() {
     <p class="title">FamilyBoard</p>
     <div>
       <RouterLink to="/">Forside</RouterLink>
-      <RouterLink to="/administrer-pligter">Administrer pligter</RouterLink>
-      <RouterLink to="/familieindstillinger">Familieindstillinger</RouterLink>
+      <RouterLink v-if="isInFamily" to="/administrer-pligter">Administrer pligter</RouterLink>
+      <RouterLink v-if="isInFamily" to="/familieindstillinger">Familieindstillinger</RouterLink>
       <RouterLink to="/kontoindstillinger">Kontoindstillinger</RouterLink>
       <a href="#" @click.prevent="logout">Log ud</a>
     </div>

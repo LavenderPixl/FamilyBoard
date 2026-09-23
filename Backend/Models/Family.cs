@@ -2,6 +2,6 @@ namespace Backend.Models;
 
 public class Family
 {
-    public int Id;
-    public string Name;
+    public int Id { get; set; }
+    public string Name { get; set; }
 }

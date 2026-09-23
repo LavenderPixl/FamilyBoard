@@ -34,12 +34,18 @@ public static class UserDataAccess
     
     public static User? GetUserFromEmail(string email)
     {
-        string SelectQuery = @"SELECT * FROM users WHERE email = @email";
+        string selectQuery = @"SELECT * FROM users WHERE email = @email";
         using var conn = Database.Database.GetConn();
 
-        var user = conn.QueryFirstOrDefault<User>(SelectQuery, new { email = email });
+        var user = conn.QueryFirstOrDefault<User>(selectQuery, new { email = email });
         
         return user;
+    }
+
+    public static bool CheckIfUserExist(int userId)
+    {
+        using var conn = Database.Database.GetConn();
+        return conn.ExecuteScalar<bool>("SELECT COUNT(1) FROM users WHERE id = @userId", new { userId });
     }
 
     public static string? GetHashedPasswordFromEmail(string email)
@@ -52,13 +58,13 @@ public static class UserDataAccess
     
     public static bool DeleteUser(int userId)
     {
-        string deletionquery = @"DELETE FROM users WHERE id=@id";
+        string deletionQuery = @"DELETE FROM users WHERE id=@id";
 
         using var conn = Database.Database.GetConn();
 
         try
         {
-            conn.Execute(deletionquery, new { id = userId });
+            conn.Execute(deletionQuery, new { id = userId });
         }
         catch (Exception e)
         {

@@ -1,17 +1,15 @@
 <script setup lang="ts">
-import {RouterView } from 'vue-router'
+import { RouterView } from 'vue-router'
 import Header from './components/Header.vue'
-
 </script>
 
 <template>
-  <Header id="nav" v-if="!$route.meta.hideNavbar"/> <!-- RouterLinks -->
-  <RouterView />
+  <Header id="nav" v-if="!$route.meta.hideNavbar" />
+  <!-- RouterLinks -->
+  <RouterView id="body" />
 </template>
 
-
 <style scoped>
-
 #nav {
   position: fixed;
   left: 0;
@@ -20,6 +18,9 @@ import Header from './components/Header.vue'
   z-index: 1000;
   height: 4rem;
   background-color: var(--color-background-soft);
+}
+#body {
+  margin-top: 4em;
 }
 :global(body) {
   background-color: var(--color-background);

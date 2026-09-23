@@ -1,9 +1,8 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import HomeView from '../views/HomeView.vue'
-import LoginView from "../views/LoginView.vue";
-import SignupView  from "../views/SignupView.vue";
-import { authStore } from "../stores/authStore.ts";
-import { userStore } from "../stores/userStore.ts";
+import LoginView from "@/views/LoginView.vue";
+import SignupView  from "@/views/SignupView.vue";
+import { authStore } from "@/stores/authStore.ts";
+import { userStore } from "@/stores/userStore.ts";
 
 const router = createRouter({
   linkActiveClass: 'border-indigo-500',
@@ -15,7 +14,31 @@ const router = createRouter({
       meta: {
         requiresAuth: true,
       },
-      component: HomeView,
+      component: () => import('../views/HomeView.vue'),
+    },
+    {
+      path: '/administrer-pligter',
+      name: 'chore-administration',
+      meta: {
+        requiresAuth: true,
+      },
+      component: () => import('../views/ChoreView.vue'),
+    },
+    {
+      path: '/familieindstillinger',
+      name: 'family-administration',
+      meta: {
+        requiresAuth: true,
+      },
+      component: () => import('../views/FamilyView.vue'),
+    },
+    {
+      path: '/kontoindstillinger',
+      name: 'user-administration',
+      meta: {
+        requiresAuth: true,
+      },
+      component: () => import('../views/UserSettings.vue'),
     },
     {
       path:'/login',
@@ -26,7 +49,7 @@ const router = createRouter({
       component: LoginView
 
     },{
-      path:'/signup',
+      path:'/opret-bruger',
       name: 'signup',
       meta: {
         hideNavbar: true,
@@ -46,17 +69,32 @@ const router = createRouter({
 })
 
 // Routes user to login, if they aren't logged in/auth isn't valid and if view has "requiresAuth" meta.
-router.beforeEach((to) => {
+router.beforeEach(async (to) => {
   const auth = authStore()
+  const user = userStore()
+
   if (to.meta.requiresAuth && !auth.isLoggedIn) {
-    return {name: "login", component: LoginView}
+    return { name: 'login' }
+  }
+  if (auth.isLoggedIn) {
+    if (user.user) {
+      auth.startRefTimer()
+
+    } else {
+      try {
+        await user.getUser()
+      } catch {
+        auth.logout()
+        return { name: 'login' }
+      }
+    }
   }
 })
 
-router.afterEach((to) => {
-  const auth = authStore()
-  if (auth.isLoggedIn) {
-    userStore().getUser()
-  }
-})
+// router.afterEach((to) => {
+//   const auth = authStore()
+//   if (auth.isLoggedIn) {
+//     userStore().getUser()
+//   }
+// })
 export default router
