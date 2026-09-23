@@ -10,7 +10,7 @@ namespace Backend.Controllers;
 [Route("user")]
 public class UserController : ControllerBase
 {
-    [HttpPost("create-user")]
+    [HttpPost()]
     public IActionResult CreateUser(NewUser newUser)
     {
         // remove capitalization from user email
@@ -21,7 +21,7 @@ public class UserController : ControllerBase
         return Ok();
     }
 
-    [HttpGet("get-user")]
+    [HttpGet()]
     [Authorize]
     public ActionResult<User> GetUser(int userId)
     {
