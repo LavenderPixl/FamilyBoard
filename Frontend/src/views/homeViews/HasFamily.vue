@@ -103,10 +103,10 @@ onMounted(async () => {
 
 <template>
   <div class="container h-full" id="main-container">
-    <h1 class="text-center">Familien {{ familyName }}</h1>
+    <h1 class="title text-center">Familien {{ familyName }}</h1>
     <div class="row justify-content-center items-center" id="goal-progress">
       <div v-if="!goal">
-        <h1>Du har ikke et aktivt mål</h1>
+        <h2>Du har ikke et aktivt mål</h2>
       </div>
       <div v-if="goal">
         <h2 class="text-center">Mål: {{ goal.name }}</h2>
@@ -126,7 +126,7 @@ onMounted(async () => {
     </div>
     <div class="row justify-content-center items-center" style="min-width: 93vw">
       <div class="col-2" id="scoreboard">
-        <h2>Rang liste</h2>
+        <h2>Rang liste // WIP</h2>
         <div class="table-scroll">
           <table class="table table-dark table-striped">
             <thead>
@@ -209,7 +209,7 @@ onMounted(async () => {
             <thead>
               <tr>
                 <th>Opgave</th>
-                <th>belønning</th>
+                <th>Points</th>
                 <th>Tag pligten</th>
               </tr>
             </thead>

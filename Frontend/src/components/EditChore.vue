@@ -54,7 +54,7 @@
         </div>
 
         <div class="field-row">
-          <label for="reward">Point</label>
+          <label for="reward">Points</label>
           <input id="reward" type="number" v-model.number="reward" class="field">
         </div>
 

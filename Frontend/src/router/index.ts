@@ -21,6 +21,7 @@ const router = createRouter({
       name: 'chore-administration',
       meta: {
         requiresAuth: true,
+        requiresAdult: true,
       },
       component: () => import('../views/ChoreView.vue'),
     },
@@ -29,6 +30,7 @@ const router = createRouter({
       name: 'family-administration',
       meta: {
         requiresAuth: true,
+        requiresAdult: true,
       },
       component: () => import('../views/FamilyView.vue'),
     },
@@ -76,10 +78,10 @@ router.beforeEach(async (to) => {
   if (to.meta.requiresAuth && !auth.isLoggedIn) {
     return { name: 'login' }
   }
+
   if (auth.isLoggedIn) {
     if (user.user) {
       auth.startRefTimer()
-
     } else {
       try {
         await user.getUser()
@@ -89,6 +91,9 @@ router.beforeEach(async (to) => {
       }
     }
   }
+
+  if (to.meta.requiresAdult && !!user.user && !user.user.isAdult)
+    return { name: 'home'}
 })
 
 // router.afterEach((to) => {
