@@ -74,6 +74,9 @@ public class TaskDataAccess
 
     public static bool UpdateCompletedStatus(int id, int reward, bool completed, int userId, int? goalId)
     {
+        if (goalId == 0)
+            goalId = null;
+        
         string updateUserQuery = @"UPDATE users SET points = points + @reward WHERE id = @userID";
         string updateTaskQuery = @"UPDATE tasks SET completed = @completed, goal_id = @goalId WHERE id = @id";
         string updateGoalQuery = @"UPDATE goals SET progress = progress + @reward WHERE id = @goalId";
