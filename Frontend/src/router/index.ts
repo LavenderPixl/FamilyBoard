@@ -1,9 +1,8 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import HomeView from '../views/HomeView.vue'
-import LoginView from "../views/LoginView.vue";
-import SignupView  from "../views/SignupView.vue";
-import { authStore } from "../stores/authStore.ts";
-import { userStore } from "../stores/userStore.ts";
+import LoginView from "@/views/LoginView.vue";
+import SignupView  from "@/views/SignupView.vue";
+import { authStore } from "@/stores/authStore.ts";
+import { userStore } from "@/stores/userStore.ts";
 
 const router = createRouter({
   linkActiveClass: 'border-indigo-500',
@@ -18,6 +17,30 @@ const router = createRouter({
       component: () => import('../views/HomeView.vue'),
     },
     {
+      path: '/administrer-pligter',
+      name: 'chore-administration',
+      meta: {
+        requiresAuth: true,
+      },
+      component: () => import('../views/ChoreView.vue'),
+    },
+    {
+      path: '/familieindstillinger',
+      name: 'family-administration',
+      meta: {
+        requiresAuth: true,
+      },
+      component: () => import('../views/FamilyView.vue'),
+    },
+    {
+      path: '/kontoindstillinger',
+      name: 'user-administration',
+      meta: {
+        requiresAuth: true,
+      },
+      component: () => import('../views/UserSettings.vue'),
+    },
+    {
       path:'/login',
       name: 'login',
       meta: {
@@ -26,7 +49,7 @@ const router = createRouter({
       component: LoginView
 
     },{
-      path:'/signup',
+      path:'/opret-bruger',
       name: 'signup',
       meta: {
         hideNavbar: true,
