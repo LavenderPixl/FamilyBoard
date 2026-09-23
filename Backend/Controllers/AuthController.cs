@@ -23,6 +23,8 @@ public class AuthController : ControllerBase
     [HttpPost("log-in")]
     public ActionResult<LoginReponse> Login(LoginUser loginUser)
     {
+        // remove capitalization from user email
+        loginUser.Email = loginUser.Email.ToLower();
         if (!Models.User.IsPasswordValid(loginUser.Email, loginUser.Password)) return Unauthorized();
 
         var user = UserDataAccess.GetUserFromEmail(loginUser.Email);

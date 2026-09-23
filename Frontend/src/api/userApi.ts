@@ -8,7 +8,7 @@ export default {
         })
     },
     createUser(email: string, username: string, password: string) {
-        return HTTP.post('/user/create-user', {
+        return HTTP.post('/user', {
             email: email,
             username: username,
             password: password
