@@ -109,8 +109,8 @@ public class TaskController : ControllerBase
         if (user.FamilyId == null) return Unauthorized("User is not in a family");
 
         var taskUpdated = TaskDataAccess.UpdateCompletedStatus(
-            id, task.Reward, true, (int)task.UserId, task.GoalId);
-        if (!taskUpdated) return Problem();
+            id, task.Reward, true, (int)task.UserId, user.CurrentGoalId);
+        // if (!taskUpdated) return Problem();
         var updatedTask = TaskDataAccess.GetTask(id);
         
         return Ok(updatedTask);
