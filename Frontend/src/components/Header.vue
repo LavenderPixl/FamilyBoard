@@ -17,7 +17,9 @@ async function isUserInFamily() {
 
   if (user.user !== null) {
     if (user.user.familyId !== 0) {
-      return true
+      if (user.user.isAdult) {
+        return true
+      }
     }
   }
   return false
