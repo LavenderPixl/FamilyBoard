@@ -141,6 +141,13 @@ public static class UserDataAccess
     }
     private static string hashPassword(string password)
     {
-        return BCrypt.Net.BCrypt.EnhancedHashPassword(password, 5);
+        // uncomment other comments in this method to see how long hashing of password takes
+        // var watch = System.Diagnostics.Stopwatch.StartNew();
+        
+        string hashedPassword = BCrypt.Net.BCrypt.EnhancedHashPassword(password, 11);
+        
+        // watch.Stop();
+        // var elapsedMs = watch.ElapsedMilliseconds;
+        return hashedPassword;
     }
 }
