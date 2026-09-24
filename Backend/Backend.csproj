@@ -4,16 +4,20 @@
         <TargetFramework>net10.0</TargetFramework>
         <Nullable>enable</Nullable>
         <ImplicitUsings>enable</ImplicitUsings>
+        <AllowMissingPrunePackageData>true</AllowMissingPrunePackageData>
       <UserSecretsId>ac0a05c1-1f02-45ba-9d70-78d17b0f5201</UserSecretsId>
   </PropertyGroup>
 
     <ItemGroup>
         <PackageReference Include="BCrypt.Net-Next" Version="4.2.0" />
         <PackageReference Include="Dapper" Version="2.1.79" />
+        <PackageReference Include="FluentAssertions" Version="8.11.0" />
         <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="10.0.11" />
+        <PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" Version="10.0.12" />
         <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="10.0.11" />
         <PackageReference Include="Npgsql" Version="10.0.3" />
         <PackageReference Include="Swashbuckle.AspNetCore" Version="10.2.3" />
+        <PackageReference Include="xunit.v3" Version="4.0.1" />
     </ItemGroup>
 
 </Project>
