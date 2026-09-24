@@ -138,7 +138,7 @@ onMounted(async () => {
     </div>
     <div class="row justify-content-center items-center" style="min-width: 93vw">
       <div class="col-2" id="scoreboard">
-        <h2>Rang liste</h2>
+        <h2>Rangliste</h2>
         <div class="table-scroll">
           <table class="table table-dark table-striped">
             <thead>
