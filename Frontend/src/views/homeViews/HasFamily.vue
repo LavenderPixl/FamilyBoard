@@ -80,7 +80,7 @@ async function refreshGoal() {
 }
 
 function sortTasks() {
-  tasks.value = tasks.value.sort((a, b) => Number(a.completed) - Number(b.completed))
+  tasks.value = tasks.value.sort((a, b) => Number(a.expireDate) - Number(b.expireDate))
 }
 
 async function getOpenTasks() {
